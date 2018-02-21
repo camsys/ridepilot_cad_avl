@@ -31,5 +31,20 @@ module RidepilotCadAvl
         expect(assigns(:runs)).to match_array([today_run_1, today_run_2])
       end
     end
+
+    context "manifest" do 
+      before do 
+        @driver = create(:driver, user: driver_user)
+        @complete_run = create(:run, date: Date.today, driver: @driver, complete: true)
+        @incomplete_run = create(:run, date: Date.today, driver: @driver)
+      end
+
+      it "finds next incomplete run for today" do 
+        request.headers.merge!(headers_reg_valid)
+        get :manifest, format: :json
+        expect(assigns(:run)).to eq(@incomplete_run)
+      end
+    end
   end
+
 end

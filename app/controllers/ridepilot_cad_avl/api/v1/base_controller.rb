@@ -27,5 +27,44 @@ module RidepilotCadAvl
         json: json_response(:fail, data: {user: "User is not a driver."})
     end
 
+    # Renders a successful response, passing along a given object as data
+    # Override main application method
+    def success_response(data={}, opts={})
+      status = opts.delete(:status) || 200 # Status code is 200 by default
+
+      json_response = {}
+
+      # Check if an ActiveRecord object or collection was passed, and if so, serialize it
+      if data.is_a?(ActiveRecord::Relation) || data.is_a?(Array)
+        json_response = package_collection(data)
+      elsif data.is_a?(ActiveRecord::Base)
+        json_response = package_record(data)
+      else
+        json_response = data
+      end
+
+      json_response[:status] = "success"
+      
+      # Return a JSend-compliant hash
+      {
+        status: status,
+        json: json_response
+      }
+    end
+    
+    # Serialize the collection of records
+    def package_collection(collection)
+      serializer = "#{collection.klass.name}Serializer".safe_constantize
+      options = {}
+      options[:meta] = { total: collection.size }
+      hash = serializer.new(collection, options).serializable_hash if serializer
+    end
+    
+    # Serialize the record 
+    def package_record(record, opts={})
+      serializer = "#{record.class.name}Serializer".safe_constantize
+      serializer.new(record).serializable_hash if serializer
+    end
+
   end
 end
