@@ -18,8 +18,13 @@ Gem::Specification.new do |s|
   s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", "~> 5.1.4"
+  s.add_dependency "pg"
 
-  s.add_development_dependency "sqlite3"
-  s.add_development_dependency "rspec-rails"
-  s.add_development_dependency "factory_bot_rails"
+
+  s.add_development_dependency 'devise'
+  s.add_development_dependency 'simple_token_authentication', '~> 1.0'
+  s.add_development_dependency 'rspec-rails'
+  s.add_development_dependency 'factory_bot_rails'
+  s.add_development_dependency 'faker'
+  #s.add_development_dependency 'rails-controller-testing'
 end
