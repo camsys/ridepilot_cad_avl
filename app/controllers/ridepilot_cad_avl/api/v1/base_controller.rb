@@ -35,8 +35,10 @@ module RidepilotCadAvl
       json_response = {}
 
       # Check if an ActiveRecord object or collection was passed, and if so, serialize it
-      if data.is_a?(ActiveRecord::Relation) || data.is_a?(Array)
+      if data.is_a?(ActiveRecord::Relation) 
         json_response = package_collection(data)
+      elsif data.is_a?(Array)
+        json_response = package_array(data)
       elsif data.is_a?(ActiveRecord::Base)
         json_response = package_record(data)
       else
@@ -58,6 +60,18 @@ module RidepilotCadAvl
       options = {}
       options[:meta] = { total: collection.size }
       hash = serializer.new(collection, options).serializable_hash if serializer
+    end
+
+    # Serialize the array of records
+    def package_array(array)
+      if array && array.size > 0
+        serializer = "#{array.first.class.name}Serializer".safe_constantize
+        options = {}
+        options[:meta] = { total: array.size }
+        hash = serializer.new(array, options).serializable_hash if serializer
+      else
+        []
+      end
     end
     
     # Serialize the record 
