@@ -5,7 +5,9 @@ module RidepilotCadAvl
     # GET /
     def index
       @runs = Run.where(date: Date.today, driver: @driver)
-      render success_response(@runs)
+      opts = {}
+      opts[:include] = [:vehicle]
+      render success_response(@runs, opts)
     end
 
     #Gets manifest of given (or first incomplete) run for today
@@ -16,7 +18,7 @@ module RidepilotCadAvl
       else
         @run = Run.where(date: Date.today, driver: @driver).incomplete.first
       end
-      render success_response(@run.try(:sorted_itineraries))
+      render success_response(@run.try(:sorted_itineraries) || [])
     end
   end  
 end

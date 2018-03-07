@@ -27,5 +27,16 @@ module RidepilotCadAvl
       
     end
 
+    private
+
+    # Returns the signed in user's username and authentication token
+  def session_hash(user)
+    {
+      name: user.name,
+      username: user.username,
+      authentication_token: user.authentication_token
+    }
+  end
+
   end
 end
