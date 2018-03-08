@@ -18,7 +18,9 @@ module RidepilotCadAvl
       else
         @run = Run.where(date: Date.today, driver: @driver).incomplete.first
       end
-      render success_response(@run.try(:sorted_itineraries) || [])
+      opts = {}
+      opts[:include] = [:address]
+      render success_response(@run.try(:sorted_itineraries) || [], opts)
     end
   end  
 end
