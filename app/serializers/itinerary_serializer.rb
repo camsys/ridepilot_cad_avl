@@ -4,7 +4,7 @@ class ItinerarySerializer
 
   belongs_to :address
 
-  attribute :id, :leg_flag
+  attribute :id, :leg_flag, :status_code
 
   attribute :time_seconds do |object|
     (object.time - object.time.beginning_of_day).to_i if object.time
@@ -16,6 +16,10 @@ class ItinerarySerializer
 
   attribute :trip_notes do |object|
     object.trip.notes if object.trip
+  end
+
+  attribute :trip_result do |object|
+    object.trip.trip_result.try(:name) if object.trip
   end
 
   attribute :trip_address_notes do |object|
@@ -30,5 +34,9 @@ class ItinerarySerializer
 
   attribute :customer_name do |object|
     object.trip.customer.name if object.trip
+  end
+
+  attribute :phone do |object|
+    object.trip.customer.phone_number_1 || object.trip.customer.phone_number_1 if object.trip && object.trip.customer
   end
 end
