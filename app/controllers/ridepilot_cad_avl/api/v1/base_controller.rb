@@ -75,7 +75,7 @@ module RidepilotCadAvl
     # Serialize the record 
     def package_record(record, opts={})
       serializer = "#{record.class.name}Serializer".safe_constantize
-      serializer.new(record).serializable_hash if serializer
+      serializer.new(record, opts).serializable_hash if serializer
     end
 
   end
