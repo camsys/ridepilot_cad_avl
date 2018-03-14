@@ -1,7 +1,7 @@
 class RunSerializer
   include FastJsonapi::ObjectSerializer
   set_type :run  # optional
-  attributes :name, :complete
+  attributes :name, :complete, :start_odometer, :end_odometer
 
   belongs_to :vehicle
 
@@ -24,16 +24,6 @@ class RunSerializer
       1
     else
       0
-    end
-  end
-
-  attribute :status do |object|
-    if object.end_odometer.present?
-      "Completed"
-    elsif object.start_odometer.present?
-      "In progress"
-    else
-      "Not yet started"
     end
   end
 end
