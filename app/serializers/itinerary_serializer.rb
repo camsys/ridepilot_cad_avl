@@ -18,6 +18,10 @@ class ItinerarySerializer
     object.trip.notes if object.trip
   end
 
+  attribute :customer_notes do |object|
+    object.trip.customer.try(:private_notes) if object.trip
+  end
+
   attribute :trip_result do |object|
     object.trip.trip_result.try(:name) if object.trip
   end
