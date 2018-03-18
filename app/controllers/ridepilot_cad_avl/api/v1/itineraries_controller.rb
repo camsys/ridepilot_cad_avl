@@ -26,13 +26,103 @@ module RidepilotCadAvl
 
     # Set itinerary status_code
     # PUT /updateItinStatus
-    def updateStatus
+    def update
       @itin = Itinerary.find_by_id(params[:id])
-      @itin.update_attribute(status_code: params[:status_code]) if @itin
+
+      @itin.update_attributes(itin_params) if @itin
 
       opts = {}
       opts[:include] = [:address]
       render success_response(@itin, opts)
+    end
+
+    # Depart
+    def depart
+      @itin = Itinerary.find_by_id(params[:id])
+      if @itin 
+        @itin.status_code = Itinerary::STATUS_IN_PROGRESS
+        @itin.departure_time = DateTime.current
+        @itin.save(validate: false)
+      end
+      
+      render success_response({})
+    end
+
+    # Arrive
+    def arrive
+      @itin = Itinerary.find_by_id(params[:id])
+      if @itin 
+        @itin.arrival_time = DateTime.current
+        @itin.save(validate: false)
+      end
+      
+      render success_response({})
+    end
+
+    def pickup
+      @itin = Itinerary.find_by_id(params[:id])
+      if @itin 
+        @itin.status_code = Itinerary::STATUS_COMPLETED
+        @itin.finish_time = DateTime.current
+        @itin.save(validate: false)
+      end
+      
+      render success_response({})
+    end
+
+    def dropoff
+      @itin = Itinerary.find_by_id(params[:id])
+      if @itin 
+        @itin.status_code = Itinerary::STATUS_COMPLETED
+        @itin.finish_time = DateTime.current
+        @itin.save(validate: false)
+      end
+      
+      render success_response({})
+    end
+
+    def noshow
+      @itin = Itinerary.find_by_id(params[:id])
+      if @itin 
+        @itin.status_code = Itinerary::STATUS_OTHER
+        @itin.finish_time = DateTime.current
+        @itin.save(validate: false)
+
+        trip = @itin.trip 
+        if trip 
+          trip.trip_result = TripResult.find_by_code('NS')
+          trip.save(validate: false)
+        end
+      end
+      
+      render success_response({})
+    end
+
+    def undo
+      @itin = Itinerary.find_by_id(params[:id])
+      if @itin 
+        if @itin.finish_time
+          @itin.finish_time = nil 
+          @itin.status_code = Itinerary::STATUS_IN_PROGRESS
+        else
+          if @itin.arrival_time
+            @itin.arrival_time = nil 
+          elsif @itin.departure_time
+            @itin.departure_time = nil
+            @itin.status_code = Itinerary::STATUS_PENDING
+          end
+        end
+        
+        @itin.save(validate: false) 
+      end
+      
+      render success_response({})
+    end
+
+    private
+
+    def itin_params
+      params.require(:itinerary).permit(:status_code, :departure_time, :arrival_time, :finish_time)
     end
   end  
 end
