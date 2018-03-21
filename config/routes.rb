@@ -1,4 +1,6 @@
 RidepilotCadAvl::Engine.routes.draw do
+  get   'cad/index'
+  get   'cad_avl'         => 'cad#index'
   namespace :api, defaults: { format: :json } do
     namespace :v1 do 
       post  'driver_sign_in'  => 'driver_sessions#create'
@@ -24,5 +26,4 @@ RidepilotCadAvl::Engine.routes.draw do
       end
     end
   end
-  get   'cad_avl'         => 'cad#index'
 end
