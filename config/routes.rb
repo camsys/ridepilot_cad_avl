@@ -24,4 +24,5 @@ RidepilotCadAvl::Engine.routes.draw do
       end
     end
   end
+  get   'cad_avl'         => 'cad#index'
 end
