@@ -76,6 +76,12 @@ module RidepilotCadAvl
         @itin.status_code = Itinerary::STATUS_COMPLETED
         @itin.finish_time = DateTime.current
         @itin.save(validate: false)
+
+        trip = @itin.trip 
+        if trip 
+          trip.trip_result = TripResult.find_by_code('COMP')
+          trip.save(validate: false)
+        end
       end
       
       render success_response({})
@@ -104,6 +110,7 @@ module RidepilotCadAvl
         if @itin.finish_time
           @itin.finish_time = nil 
           @itin.status_code = Itinerary::STATUS_IN_PROGRESS
+          revert_trip_result = true
         else
           if @itin.arrival_time
             @itin.arrival_time = nil 
@@ -114,6 +121,14 @@ module RidepilotCadAvl
         end
         
         @itin.save(validate: false) 
+
+        if revert_trip_result
+          trip = @itin.trip 
+          if trip 
+            trip.trip_result = nil
+            trip.save(validate: false)
+          end
+        end
       end
       
       render success_response({})
