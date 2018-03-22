@@ -4,7 +4,7 @@ class ItinerarySerializer
 
   belongs_to :address
 
-  attribute :id, :leg_flag, :status_code, :departure_time, :arrival_time, :finish_time
+  attribute :id, :trip_id, :leg_flag, :status_code, :departure_time, :arrival_time, :finish_time
 
   attribute :time_seconds do |object|
     (object.time - object.time.beginning_of_day).to_i if object.time
