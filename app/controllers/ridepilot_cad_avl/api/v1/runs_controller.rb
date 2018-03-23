@@ -15,9 +15,18 @@ module RidepilotCadAvl
       @run = Run.find_by_id(params[:id])
       
       if @run
+        @run.driver_notes = params[:driver_notes]
         @run.start_odometer = params[:start_odometer]
         @run.actual_start_time = DateTime.current
         @run.save(validate: false)
+
+        unless params[:inspections].blank?
+          params[:inspections].each do |insp|
+            run_insp = @run.run_vehicle_inspections.where(vehicle_inspection_id: insp[:id]).first_or_create
+            run_insp.checked = insp[:checked]
+            run_insp.save(validate: false)
+          end
+        end
 
         # start leg completed
         @run.itineraries.run_begin.update_all(status_code: Itinerary::STATUS_COMPLETED)
@@ -40,6 +49,14 @@ module RidepilotCadAvl
       end
 
       render success_response({})
+    end
+
+    def inspections
+      @run = Run.find_by_id(params[:id])
+
+      render success_response({
+        data: @run.try(:vehicle_inspections_as_json) || []
+        })
     end
   end  
 end

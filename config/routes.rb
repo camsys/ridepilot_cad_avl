@@ -9,6 +9,7 @@ RidepilotCadAvl::Engine.routes.draw do
         member do
           put 'start' 
           put 'end' 
+          get 'inspections'
         end 
       end
 
