@@ -1,14 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ridepilot cad avl</title>
-  <%= stylesheet_link_tag    "ridepilot_cad_avl/application", media: "all" %>
-  <%= javascript_include_tag "ridepilot_cad_avl/application" %>
+  <title>
+    <%= content_for?(:title) ? yield(:title) : translate_helper("application_title") %>
+  </title>
+  <%= stylesheet_link_tag    'application', media: 'all' %>
+  <%= split_stylesheet_link_tag "v1_theme", :media => "all" %>
+  <%= render 'shared/google_maps/google_map_api' %>
+  <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
+  <%= yield :head %>
 </head>
 <body>
+  <div>
+  <div id="session-timeout-warning" style="display: none;">
+    <%= translate_helper("session_timeout_warning") %>
+  </div>
+  <div id="header">
+    <div class="wrap selfclear">
+      <span style="font-size: 2em;">RidePilot CAD/AVL</span>
+      <div id="login-area">
+        Logged in to 
+        <% if @provider_map.size > 1 %>
+          <%= form_tag change_provider_path %>
+            <select name="provider_id" onchange="form.submit();">
+              <%= options_for_select(@provider_map, selected = current_user.current_provider_id) %>
+            </select>
+            <%= hidden_field_tag "come_from", request.fullpath %>
+          </form>
+        <% else %>
+          <%= current_user.current_provider.name %>
+        <% end %>
+      </div>
+    </div><!-- /.wrap -->
+  </div><!-- /#header -->
 
-<%= yield %>
+  <div id="main" class="row">
+    <div id="messages" class="wrap selfclear">
+      <% if notice %>
+        <p class="alert alert-info"><%= notice %></p>
+      <% end %>
+      <% if alert %>
+        <p class="alert alert-danger"><%= alert %></p>
+      <% end %>
+    </div>
+    <%= content_for?(:menu_bar) ? yield(:menu_bar) : '' %>
+    <%= yield %>
+  </div>
 
+  <%= render partial: 'layouts/footer' %>
+  <%= yield :footer %>
+  
+  <%= render 'shared/application_alert_dialog' %>
+
+  <% if current_user %>
+    <%= javascript_tag do %>
+      $(document).ready(function(){
+        idleTimer = new IdleTimer();
+        idleTimer.start();
+
+        // this is to fix modal dialog under the fade mask
+        $('.modal').appendTo("body") 
+      });
+    <% end %>
+  <% end %>
+  </div>
 </body>
 </html>
