@@ -24,6 +24,12 @@ RidepilotCadAvl::Engine.routes.draw do
           put 'undo'
         end 
       end
+
+      resources :trips, only: [] do
+        member do 
+          put 'update_fare'
+        end
+      end
     end
   end
 end

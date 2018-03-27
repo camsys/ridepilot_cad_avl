@@ -43,4 +43,27 @@ class ItinerarySerializer
   attribute :phone do |object|
     object.trip.customer.phone_number_1 || object.trip.customer.phone_number_1 if object.trip && object.trip.customer
   end
+
+  attribute :fare do |object|
+    trip = object.trip
+    if trip 
+      fare = trip.fare || trip.provider.fare
+      if fare && !fare.is_free? 
+        if fare.is_payment?
+          fare_amount = trip.fare_amount
+          collected_time = trip.fare_collected_time
+        else
+          fare = trip.donation.try(:amount)
+          collected_time = trip.donation.try(:updated_at)
+        end
+        
+        {
+          fare_type: fare.fare_type,
+          pre_trip: fare.pre_trip,
+          amount: fare_amount,
+          collected_time: collected_time
+        }
+      end
+    end
+  end
 end
