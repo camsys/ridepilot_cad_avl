@@ -1,0 +1,10 @@
+<%= javascript_tag do %>
+  var map;
+  var n = <% @provider.region_nw_corner.y %>
+  function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: -34.397, lng: 150.644},
+      zoom: 8
+    });
+  }
+<% end %>
