@@ -8,3 +8,5 @@
     });
   }
 <% end %>
+
+<%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?v=3&libraries=places&key=#{ENV['GOOGLE_API_KEY']}&callback=initMap", async: true, defer: true %>
