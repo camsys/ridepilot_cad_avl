@@ -1,10 +1,9 @@
 module RidepilotCadAvl
-  class CadController < ApplicationController
-
+  class CadController < ::ApplicationController
+    layout "ridepilot_cad_avl/application"
     def index
       @provider = current_user.current_provider
-      # current_user.current_provider = @provider
-      # current_user.save!
+      @cad_day = Date.today
     end
 
   end

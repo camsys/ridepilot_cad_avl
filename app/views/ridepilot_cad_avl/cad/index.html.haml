@@ -1,2 +1,7 @@
-.col-xs-12{style: 'position: absolute; padding: 0px 15px 0px 15px; height: 100%; min-height: 100%'}
-  = render :partial => 'main_box'
+.col-md-3{style: 'padding: 0px 15px 0px 0px;'}
+  = render 'date_picker'
+  = render 'run_selector'
+  = render 'run_options'
+
+.col-md-9{style: 'padding: 0px;'}
+  = render 'map'

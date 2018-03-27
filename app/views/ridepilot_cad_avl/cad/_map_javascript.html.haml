@@ -1,0 +1,42 @@
+:ruby
+  center_lat = @provider.viewport_center ? @provider.viewport_center.y : GOOGLE_MAP_DEFAULTS[:viewport][:center_lat]
+  center_lng = @provider.viewport_center ? @provider.viewport_center.x : GOOGLE_MAP_DEFAULTS[:viewport][:center_lng]
+  zoom = @provider.viewport_zoom || GOOGLE_MAP_DEFAULTS[:viewport][:zoom]
+:javascript
+  $(function(){
+    var map;
+    function resizeMapContainer() {
+      // set height as: window size - (page header + footer)
+      $('#map').height($(window).height() - 100);  
+    } 
+     
+    function initMap() {
+      var bounds = new google.maps.LatLngBounds(
+        new google.maps.LatLng(#{@provider.region_se_corner.y}, #{@provider.region_nw_corner.x}),
+        new google.maps.LatLng(#{@provider.region_nw_corner.y}, #{@provider.region_se_corner.x})
+      );
+
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: #{center_lat}, lng: #{center_lng}},
+        zoom: #{zoom}
+      });
+
+      map.fitBounds(bounds);
+    }
+
+    // create map
+    resizeMapContainer();
+    initMap();
+
+    // resize map (listen to resize stop event, so no need to re-calculate size all the time before stop)
+    $(window).resize(function() {
+      clearTimeout(window.resizedFinished);
+      window.resizedFinished = setTimeout(function(){
+        resizeMapContainer();
+        var center = map.getCenter();
+        google.maps.event.trigger(map, "resize");
+        map.setCenter(center);
+      }, 250);
+    });
+  });
+  
