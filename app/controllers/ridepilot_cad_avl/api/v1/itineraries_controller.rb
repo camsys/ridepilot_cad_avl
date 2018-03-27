@@ -107,28 +107,38 @@ module RidepilotCadAvl
     def undo
       @itin = Itinerary.find_by_id(params[:id])
       if @itin 
-        if @itin.finish_time
+        fare = @itin.fare
+        trip = @itin.trip
+
+        if fare && trip && @itin.is_pickup? && @itin.finish_time && trip.fare_collected_time
+          trip.fare_collected_time = nil
+        elsif fare && @itin.is_pickup? && @itin.finish_time && !trip.fare_collected_time
           @itin.finish_time = nil 
           @itin.status_code = Itinerary::STATUS_IN_PROGRESS
           revert_trip_result = true
+        elsif fare && @itin.is_dropoff? && !@itin.finish_time && trip.fare_collected_time
+          trip.fare_collected_time = nil
+        elsif fare && @itin.is_dropoff? && !@itin.finish_time && @itin.arrival_time && !trip.fare_collected_time
+          @itin.arrival_time = nil
         else
-          if @itin.arrival_time
-            @itin.arrival_time = nil 
-          elsif @itin.departure_time
-            @itin.departure_time = nil
-            @itin.status_code = Itinerary::STATUS_PENDING
+          if @itin.finish_time
+            @itin.finish_time = nil 
+            @itin.status_code = Itinerary::STATUS_IN_PROGRESS
+            revert_trip_result = true
+          else
+            if @itin.arrival_time
+              @itin.arrival_time = nil 
+            elsif @itin.departure_time
+              @itin.departure_time = nil
+              @itin.status_code = Itinerary::STATUS_PENDING
+            end
           end
         end
         
-        @itin.save(validate: false) 
+        @itin.save(validate: false) if @itin.changed?
 
-        if revert_trip_result
-          trip = @itin.trip 
-          if trip 
-            trip.trip_result = nil
-            trip.save(validate: false)
-          end
-        end
+        trip.try(:trip_result) = nil if trip && revert_trip_result
+        trip.save(validate: false) if trip && trip.changed?
       end
       
       render success_response({})

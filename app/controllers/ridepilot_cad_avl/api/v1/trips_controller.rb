@@ -15,6 +15,9 @@ module RidepilotCadAvl
           donation.date = DateTime.now
           donation.save(validate:false)
         end
+
+        @trip.fare = fare 
+        @trip.save(validate: false) if @trip.changed?
       end
 
       render success_response({})
