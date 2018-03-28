@@ -2,6 +2,9 @@
   center_lat = @provider.viewport_center ? @provider.viewport_center.y : GOOGLE_MAP_DEFAULTS[:viewport][:center_lat]
   center_lng = @provider.viewport_center ? @provider.viewport_center.x : GOOGLE_MAP_DEFAULTS[:viewport][:center_lng]
   zoom = @provider.viewport_zoom || GOOGLE_MAP_DEFAULTS[:viewport][:zoom]
+
+  has_bounds = @provider.region_se_corner.present? && @provider.region_nw_corner.present?
+
 :javascript
   $(function(){
     var map;
@@ -11,17 +14,19 @@
     } 
      
     function initMap() {
-      var bounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(#{@provider.region_se_corner.y}, #{@provider.region_nw_corner.x}),
-        new google.maps.LatLng(#{@provider.region_nw_corner.y}, #{@provider.region_se_corner.x})
-      );
-
       map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: #{center_lat}, lng: #{center_lng}},
         zoom: #{zoom}
       });
 
-      map.fitBounds(bounds);
+      if(#{has_bounds || false}) {
+        var bounds = new google.maps.LatLngBounds(
+          new google.maps.LatLng(#{@provider.region_se_corner.try(:y) || (center_lat - 5)}, #{@provider.region_nw_corner.try(:x) || (center_lng + 5)}),
+          new google.maps.LatLng(#{@provider.region_nw_corner.try(:y) || (center_lat + 5)}, #{@provider.region_se_corner.try(:x) || (center_lng - 5)})
+        );
+
+        map.fitBounds(bounds);
+      }
     }
 
     // create map
