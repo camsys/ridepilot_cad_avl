@@ -1,20 +1,26 @@
 %h3
   Select Runs to Show:
 .col-sm-12
-  %input.selectall{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
+  %input.selectall.run_list{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
   = "Select All"
 .col-sm-12
   %hr{style: 'margin: 4px 0px'}
 - @runs.each do |run|
   .col-sm-12
-    %input{type: 'checkbox', class: 'run-filters', style: 'vertical-align: baseline'} &nbsp;
+    %input.run_list{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
     = run.name
+.col-sm-12
+  %input{type: 'checkbox', 'data-toggle': 'toggle', 'data-on': 'All', 'data-off': 'Incomplete Only', 'data-size': 'small', 'data-width': '125'}
 
 :javascript
   $('.selectall').click(function() {
     if ($(this).is(':checked')) {
-        $('div input.run-filters').prop('checked', true);
+        $('div input.run_list').prop('checked', true);
     } else {
-        $('div input.run-filters').prop('checked', false);
+        $('div input.run_list').prop('checked', false);
     }
+  });
+
+  $('input.run_list').on('change', function() {
+    alert("yo");
   });

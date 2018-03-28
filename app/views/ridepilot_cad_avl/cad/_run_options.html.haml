@@ -1,11 +1,19 @@
 .panel.panel-default#run_options_panel
-  %table
-  .caption
+  .panel-body{style: 'padding: 5px;'}
     %h3
       For Selected Runs, Show:
-  %tr
-    -# second th is for checkboxes
-    %th
-      %input.master-select-checkbox{type: "checkbox"}
-    %th= translate_helper("run_name_column")
-
+    .col-sm-12
+      %input{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
+      = "Option 1"
+    .col-sm-12
+      %input{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
+      = "Option 2"
+    .col-sm-12
+      %input{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
+      = "Option 3"
+    .col-sm-12
+      %input{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
+      = "Option 4"
+    .col-sm-12
+      %input{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
+      = "Option 5"
