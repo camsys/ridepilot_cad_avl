@@ -137,8 +137,10 @@ module RidepilotCadAvl
         
         @itin.save(validate: false) if @itin.changed?
 
-        trip.try(:trip_result) = nil if trip && revert_trip_result
-        trip.save(validate: false) if trip && trip.changed?
+        if trip
+          trip.trip_result = nil if revert_trip_result
+          trip.save(validate: false) if trip.changed?
+        end
       end
       
       render success_response({})
