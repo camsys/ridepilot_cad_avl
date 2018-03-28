@@ -146,10 +146,31 @@ module RidepilotCadAvl
       render success_response({})
     end
 
+    def track_location
+      @itin = Itinerary.find_by_id(params[:id])
+      if @itin
+        run = @itin.run 
+        provider = run.provider 
+        log_time = DateTime.now
+        gps_location = GpsLocation.new(gps_location_params)
+        gps_location.provider = provider
+        gps_location.log_time = log_time
+        gps_location.run = run 
+        gps_location.itinerary_id = @itin.id 
+        gps_location.save
+      end
+
+      render success_response({})
+    end
+
     private
 
     def itin_params
       params.require(:itinerary).permit(:status_code, :departure_time, :arrival_time, :finish_time)
+    end
+
+    def gps_location_params
+      params.require(:gps_location).permit(:latitude, :longitude, :bearing, :speed, :accuracy)
     end
   end  
 end

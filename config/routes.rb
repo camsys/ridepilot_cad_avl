@@ -22,6 +22,7 @@ RidepilotCadAvl::Engine.routes.draw do
           put 'dropoff'
           put 'noshow' 
           put 'undo'
+          put 'track_location'
         end 
       end
 
