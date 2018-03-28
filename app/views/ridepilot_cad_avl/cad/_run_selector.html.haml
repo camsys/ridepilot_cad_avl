@@ -3,5 +3,5 @@
     %h3.panel-title
       Select Runs to Show:
   .panel-body{style: 'padding: 5px;'}
-    %p
-      Test_A
+    - @runs.each do |run|
+      %p= run.name
