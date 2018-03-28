@@ -1,7 +1,7 @@
-= form_for :cad_date_picker, url: '#', html: { :id => "cad_date_filter_form", class: 'form-inline', style: "margin-bottom: 10px;" }, :method => :get do |f|
+= form_for :cad, url: ridepilot_cad_avl.cad_avl_path, html: { :id => "cad_date_filter_form", class: 'form-inline', style: "margin-bottom: 10px;" }, :method => :get do |f|
   = f.label :cad_day, "Select Date:"
   .input-group.datepicker-icon
-    = f.text_field :cad_day, :value => format_time_for_listing_day(@cad_day), class: "form-control datepicker", readonly: true
+    = f.text_field :date, :value => format_time_for_listing_day(@cad_day), class: "form-control datepicker", readonly: true
     .input-group-btn
       %button.btn.btn-default{:type => "button"}
         = image_tag "calendar-clock.png"
@@ -10,7 +10,7 @@
   $(document).ready(function(){
     makeDatePickers();
 
-    $('#run_trip_filters_run_trip_day').change(function() {
+    $('#cad_date').change(function() {
       $(this).parents('form').submit();
     });
   });
