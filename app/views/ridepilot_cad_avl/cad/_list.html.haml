@@ -1,0 +1,20 @@
+%h3
+  Select Runs to Show:
+.col-sm-12
+  %input.selectall{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
+  = "Select All"
+.col-sm-12
+  %hr{style: 'margin: 4px 0px'}
+- @runs.each do |run|
+  .col-sm-12
+    %input{type: 'checkbox', class: 'run-filters', style: 'vertical-align: baseline'} &nbsp;
+    = run.name
+
+:javascript
+  $('.selectall').click(function() {
+    if ($(this).is(':checked')) {
+        $('div input.run-filters').prop('checked', true);
+    } else {
+        $('div input.run-filters').prop('checked', false);
+    }
+  });

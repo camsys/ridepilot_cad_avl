@@ -1,7 +1,3 @@
 .panel.panel-default#run_options_panel
-  .panel-heading
-    %h3.panel-title
-      Select Runs to Show:
   .panel-body{style: 'padding: 5px;'}
-    - @runs.each do |run|
-      %p= run.name
+    = render :partial => 'list'

@@ -1,7 +1,11 @@
 .panel.panel-default#run_options_panel
-  .panel-heading
-    %h3.panel-title
+  %table
+  .caption
+    %h3
       For Selected Runs, Show:
-  .panel-body{style: 'padding: 5px;'}
-    %p
-      Test_B
+  %tr
+    -# second th is for checkboxes
+    %th
+      %input.master-select-checkbox{type: "checkbox"}
+    %th= translate_helper("run_name_column")
+
