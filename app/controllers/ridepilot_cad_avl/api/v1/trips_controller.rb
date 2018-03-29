@@ -6,12 +6,14 @@ module RidepilotCadAvl
       fare = @trip.fare || @trip.provider.fare
       if fare && !fare.is_free?
         if fare.is_payment?
-          @trip.fare_amount = params[:amount]
+          @trip.fare_amount = params[:fare_amount]
           @trip.fare_collected_time = DateTime.now
           @trip.save(validate: false)
         else
           donation = @trip.donation || @trip.build_donation
-          donation.amount = params[:amount]
+          donation.customer = @trip.customer 
+          donation.user = current_user
+          donation.amount = params[:fare_amount]
           donation.date = DateTime.now
           donation.save(validate:false)
         end
