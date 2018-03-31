@@ -1,19 +1,27 @@
+:css
+  .run_option {
+    font-weight: normal;
+    display: block;
+  }
+
+  .run_option input {
+    vertical-align: initial;
+  }
+
 .panel.panel-default#run_options_panel
   .panel-body{style: 'padding: 5px;'}
     %h3
       For Selected Runs, Show:
+    
     .col-sm-12
-      %input{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
-      = "Option 1"
-    .col-sm-12
-      %input{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
-      = "Option 2"
-    .col-sm-12
-      %input{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
-      = "Option 3"
-    .col-sm-12
-      %input{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
-      = "Option 4"
-    .col-sm-12
-      %input{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
-      = "Option 5"
+      %label.run_option
+        %input{type: 'checkbox', checked: true}
+          Upcoming Path
+
+      %label.run_option
+        %input{type: 'checkbox'}
+          Prior Path
+
+      %label.run_option
+        %input{type: 'checkbox'}
+          Garage, pickup and dropoff locations

@@ -1,45 +1,54 @@
+:css
+  .run_checkboxes .run_list {
+    font-weight: normal;
+    display: block;
+  }
+
+  .run_list input {
+    vertical-align: initial;
+  }
+
+  .toggle {
+    float: right;
+  }
 %h3
   Select Runs to Show:
-.col-sm-12
-  %input.selectall.run_list{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
-  = 'Select All'
-.col-sm-12
-  %hr{style: 'margin: 4px 0px'}
-#run_list_box
-  - @runs.each do |run|
-    .col-sm-12
-      %input.run_list{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
-      = run.name
-.col-sm-12
-  %input#all_toggle{type: 'checkbox', 'data-toggle': 'toggle', 'data-on': 'All', 'data-off': 'Incomplete Only', 'data-size': 'small', 'data-width': '125', checked: 'true'}
+  %input#all_toggle{type: 'checkbox', 'data-toggle': 'toggle', 'data-on': 'All Runs', 'data-off': 'Incomplete Only', 'data-size': 'small', 'data-width': '125', checked: 'true'}
+.col-sm-12  
+  %label.run_list
+    %input.selectall{type: 'checkbox'} 
+      Select All
+  %hr{style: 'margin: 0px;'}
+  = render 'run_checkboxes', runs: @runs
 
--@incomplete_runs_only = false
 
 :javascript
   $('.selectall').click(function() {
     if ($(this).is(':checked')) {
-        $('div input.run_list').prop('checked', true);
+      $('.run_list input').prop('checked', true);
     } else {
-        $('div input.run_list').prop('checked', false);
+      $('.run_list input').prop('checked', false);
     }
   });
 
   $('#all_toggle').change(function() {
     if ($(this).prop('checked')){
-      "#{@incomplete_runs_only = false}";
-      generateList("#{@incomplete_runs_only}");
+      reloadRuns(false);
     }
     else {
-      "#{@incomplete_runs_only = true}";
-      generateList("#{@incomplete_runs_only}");
+      reloadRuns(true);
     }
   });
 
-  function generateList(incomplete_runs_only){
+  function reloadRuns(incomplete_runs_only){
+    var data = {
+      cad: {
+        date: "#{@cad_day}",
+        incomplete_runs_only: incomplete_runs_only
+      }
+    };
     $.ajax({
-      method: "GET",
       url: "#{reload_runs_path}",
-      data: {selected_day: "#{@cad_day}",
-             incomplete_runs_only: incomplete_runs_only}
+      data: data
     });
   }

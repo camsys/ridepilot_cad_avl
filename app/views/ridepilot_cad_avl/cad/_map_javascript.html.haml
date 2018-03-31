@@ -11,6 +11,13 @@
     function resizeMapContainer() {
       // set height as: window size - (page header + footer)
       $('#map').height($(window).height() - 100);  
+    }
+
+    function resizeMap() {
+      resizeMapContainer();
+      var center = map.getCenter();
+      google.maps.event.trigger(map, "resize");
+      map.setCenter(center);
     } 
      
     function initMap() {
@@ -37,10 +44,7 @@
     $(window).resize(function() {
       clearTimeout(window.resizedFinished);
       window.resizedFinished = setTimeout(function(){
-        resizeMapContainer();
-        var center = map.getCenter();
-        google.maps.event.trigger(map, "resize");
-        map.setCenter(center);
+        resizeMap();
       }, 250);
     });
   });

@@ -1,0 +1,5 @@
+.run_checkboxes
+  - runs.each do |run|
+    %label.run_list
+      %input{type: 'checkbox'}
+        = run.name
