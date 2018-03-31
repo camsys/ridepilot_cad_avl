@@ -5,15 +5,11 @@
   = 'Select All'
 .col-sm-12
   %hr{style: 'margin: 4px 0px'}
-
-
 #run_list_box
   - @runs.each do |run|
     .col-sm-12
       %input.run_list{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
       = run.name
-
-
 .col-sm-12
   %input#all_toggle{type: 'checkbox', 'data-toggle': 'toggle', 'data-on': 'All', 'data-off': 'Incomplete Only', 'data-size': 'small', 'data-width': '125', checked: 'true'}
 

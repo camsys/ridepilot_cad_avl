@@ -1,4 +1,4 @@
-console.log("in .js.haml");
-
 $('#run_list_box').empty();
 
+- @runs.each do |run|
+  $('#run_list_box').append("#{ j render partial: 'list_item', locals: {run: run} }");
