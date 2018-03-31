@@ -14,8 +14,15 @@ module RidepilotCadAvl
     end
 
     def reload_runs
-      selected_day = params[:selected_day]
-      incomplete_runs_only = params[:incomplete_runs_only]
+      if !params[:selected_day].blank?
+        @cad_day = DateTime.parse params[:selected_day]
+      end
+
+      if params[:incomplete_runs_only] == "true"
+        @runs = Run.for_provider(current_provider_id).for_date(@cad_day).where(complete: [false, nil]).reorder("lower(name)")
+      else
+        @runs = Run.for_provider(current_provider_id).for_date(@cad_day).reorder("lower(name)")
+      end
     end
 
   end

@@ -17,13 +17,8 @@
 .col-sm-12
   %input#all_toggle{type: 'checkbox', 'data-toggle': 'toggle', 'data-on': 'All', 'data-off': 'Incomplete Only', 'data-size': 'small', 'data-width': '125', checked: 'true'}
 
-
 -@incomplete_runs_only = false
--@test = 3
 
--#      "#{@runs = Run.for_provider(current_provider_id).for_date(@cad_day).where(complete: [false, nil]).reorder("lower(name)")}";
--#      "#{@runs = Run.for_provider(current_provider_id).for_date(@cad_day).reorder("lower(name)")}";
--#      url: "#{update_ntd_funding_sources_path(provider: params[:provider])}",
 :javascript
   $('.selectall').click(function() {
     if ($(this).is(':checked')) {
@@ -35,11 +30,11 @@
 
   $('#all_toggle').change(function() {
     if ($(this).prop('checked')){
-      "#{@incomplete_runs_only = true}";
+      "#{@incomplete_runs_only = false}";
       generateList("#{@incomplete_runs_only}");
     }
     else {
-      "#{@incomplete_runs_only = false}";
+      "#{@incomplete_runs_only = true}";
       generateList("#{@incomplete_runs_only}");
     }
   });
