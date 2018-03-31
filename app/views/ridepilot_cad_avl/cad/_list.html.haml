@@ -7,7 +7,7 @@
   %hr{style: 'margin: 4px 0px'}
 
 
-  #run_list_box
+#run_list_box
   - @runs.each do |run|
     .col-sm-12
       %input.run_list{type: 'checkbox', style: 'vertical-align: baseline'} &nbsp;
@@ -41,7 +41,7 @@
 
   function generateList(incomplete_runs_only){
     $.ajax({
-      method: "POST",
+      method: "GET",
       url: "#{reload_runs_path}",
       data: {selected_day: "#{@cad_day}",
              incomplete_runs_only: incomplete_runs_only}

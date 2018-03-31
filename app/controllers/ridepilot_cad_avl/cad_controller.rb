@@ -23,6 +23,11 @@ module RidepilotCadAvl
       else
         @runs = Run.for_provider(current_provider_id).for_date(@cad_day).reorder("lower(name)")
       end
+
+      respond_to do |format|
+        format.js
+      end
+
     end
 
   end

@@ -1,6 +1,6 @@
 RidepilotCadAvl::Engine.routes.draw do
   get   'cad_avl'         => 'cad#index'
-  post  'reload_runs'     => 'cad#reload_runs'
+  get   'reload_runs'     => 'cad#reload_runs'
   namespace :api, defaults: { format: :json } do
     namespace :v1 do 
       post  'driver_sign_in'  => 'driver_sessions#create'
