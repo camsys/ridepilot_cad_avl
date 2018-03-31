@@ -1,7 +1,27 @@
+:css
+  .run_option {
+    font-weight: normal;
+    display: block;
+  }
+
+  .run_option input {
+    vertical-align: initial;
+  }
+
 .panel.panel-default#run_options_panel
-  .panel-heading
-    %h3.panel-title
-      For Selected Runs, Show:
   .panel-body{style: 'padding: 5px;'}
-    %p
-      Test_B
+    %h3
+      For Selected Runs, Show:
+    
+    .col-sm-12
+      %label.run_option
+        %input{type: 'checkbox', checked: true}
+          Upcoming Path
+
+      %label.run_option
+        %input{type: 'checkbox'}
+          Prior Path
+
+      %label.run_option
+        %input{type: 'checkbox'}
+          Garage, pickup and dropoff locations

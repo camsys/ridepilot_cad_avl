@@ -8,6 +8,9 @@
   <%= split_stylesheet_link_tag "v1_theme", :media => "all" %>
   <%= render 'shared/google_maps/google_map_api' %>
   <%= javascript_include_tag 'application' %>
+  <%= stylesheet_link_tag    'https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css', media: 'all' %>
+  <%= javascript_include_tag 'https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js' %>
+
   <%= csrf_meta_tags %>
   <%= yield :head %>
 </head>

@@ -1,0 +1,54 @@
+:css
+  .run_checkboxes .run_list {
+    font-weight: normal;
+    display: block;
+  }
+
+  .run_list input {
+    vertical-align: initial;
+  }
+
+  .toggle {
+    float: right;
+  }
+%h3
+  Select Runs to Show:
+  %input#all_toggle{type: 'checkbox', 'data-toggle': 'toggle', 'data-on': 'All Runs', 'data-off': 'Incomplete Only', 'data-size': 'small', 'data-width': '125', checked: 'true'}
+.col-sm-12  
+  %label.run_list
+    %input.selectall{type: 'checkbox'} 
+      Select All
+  %hr{style: 'margin: 0px;'}
+  = render 'run_checkboxes', runs: @runs
+
+
+:javascript
+  $('.selectall').click(function() {
+    if ($(this).is(':checked')) {
+      $('.run_list input').prop('checked', true);
+    } else {
+      $('.run_list input').prop('checked', false);
+    }
+  });
+
+  $('#all_toggle').change(function() {
+    if ($(this).prop('checked')){
+      reloadRuns(false);
+    }
+    else {
+      reloadRuns(true);
+    }
+  });
+
+  function reloadRuns(incomplete_runs_only){
+    var data = {
+      cad: {
+        date: "#{@cad_day}",
+        incomplete_runs_only: incomplete_runs_only
+      }
+    };
+    $.ajax({
+      url: "#{reload_runs_path}",
+      data: data
+    });
+  }
