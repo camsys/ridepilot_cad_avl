@@ -3,7 +3,7 @@ module RidepilotCadAvl
 
     def update_fare
       @trip = Trip.find_by_id(params[:id])
-      fare = @trip.fare || @trip.provider.fare
+      fare = @trip.fare || @trip.provider.fare.try(:dup)
       if fare && !fare.is_free?
         if fare.is_payment?
           @trip.fare_amount = params[:fare_amount]
@@ -15,7 +15,7 @@ module RidepilotCadAvl
           donation.user = current_user
           donation.amount = params[:fare_amount]
           donation.date = DateTime.now
-          donation.save(validate:false)
+          donation.save(validate:false) if donation.amount && donation.amount > 0
         end
 
         @trip.fare = fare 
