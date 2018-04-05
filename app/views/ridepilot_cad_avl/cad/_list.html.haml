@@ -52,3 +52,26 @@
       data: data
     });
   }
+
+  $("div.run_checkboxes input").click(function (){
+    var run_ids = []
+    $("label.run_list input").each(function(){
+      if ($(this).is(':checked')) {
+        run_ids.push($(this).data('run-id'));
+      }
+      selectRuns(run_ids);
+    });
+  });
+
+  function selectRuns(run_ids){
+    var data = {
+      cad: {
+        date: "#{@cad_day}",
+        selected_runs: run_ids
+      }
+    };
+    $.ajax({
+      url: "#{update_map_markers_path}",
+      data: data
+    });
+  }

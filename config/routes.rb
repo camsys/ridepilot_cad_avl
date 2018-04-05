@@ -1,6 +1,7 @@
 RidepilotCadAvl::Engine.routes.draw do
   get   'cad_avl'         => 'cad#index'
   get   'reload_runs'     => 'cad#reload_runs'
+  get   'update_map_markers'     => 'cad#update_map_markers'
   namespace :api, defaults: { format: :json } do
     namespace :v1 do 
       post  'driver_sign_in'  => 'driver_sessions#create'
