@@ -23,9 +23,18 @@ module RidepilotCadAvl
       @runs = Run.for_provider(current_provider_id).for_date(@cad_day).reorder("lower(name)")
       selected_runs = @runs.where(id: params[:cad][:selected_runs])
 
+      # gps_locations = GpsLocation.where(run_id: selected_runs.for_date(@cad_day).pluck(:id)).where(provider_id: selected_runs.for_date(@cad_day).pluck(:provider_id)).reorder("log_time")
+
+      latest_locations = []
+      selected_runs.each do |run|
+        latest_location = GpsLocation.where(run_id: run.id).where(provider_id: run.provider_id).reorder("log_time").first
+        latest_locations.push(latest_location)
+      end
+
+      puts latest_locations
 
       respond_to do |format|
-        format.js { render locals:{selected_runs: selected_runs} }
+        format.js { render locals:{latest_locations: latest_locations} }
       end
     end
 

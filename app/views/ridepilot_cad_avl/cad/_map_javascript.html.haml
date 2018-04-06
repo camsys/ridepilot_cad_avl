@@ -26,8 +26,6 @@
         zoom: #{zoom}
       });
 
-      placeMarker({lat:40.244444, lng: -111.660833});
-
       if(#{has_bounds || false}) {
         var bounds = new google.maps.LatLngBounds(
           new google.maps.LatLng(#{@provider.region_se_corner.try(:y) || (center_lat - 5)}, #{@provider.region_nw_corner.try(:x) || (center_lng + 5)}),
@@ -36,14 +34,6 @@
 
         map.fitBounds(bounds);
       }
-    }
-
-    function placeMarker(gpsLatLng){
-      var marker = new google.maps.Marker({
-          position: gpsLatLng,
-          map: map,
-          title: 'Hello World!'
-        });
     }
 
     // create map
