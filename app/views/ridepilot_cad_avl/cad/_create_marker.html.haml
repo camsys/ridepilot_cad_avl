@@ -1,0 +1,10 @@
+:javascript
+  var latlng = new google.maps.LatLng("#{location.lat}","#{location.lng}");
+
+  var map = new google.maps.Map(document.getElementById("map"), {});
+
+  var marker = new google.maps.Marker({
+    position: latlng,
+  });
+
+  marker.setMap(map);
