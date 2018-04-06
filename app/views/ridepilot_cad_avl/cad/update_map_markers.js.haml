@@ -1,3 +1,15 @@
-- latest_locations.each do |location|
-  = render partial: 'create_marker', location: location
+:javascript
 
+  alert("Test");
+
+  $.each(location, function(loc) {
+    var latlng = new google.maps.LatLng(loc.lat, loc.lng);
+
+    var map = new google.maps.Map(document.getElementById("map"), {});
+
+    var marker = new google.maps.Marker({
+      position: latlng,
+    });
+
+    marker.setMap(map);
+  });

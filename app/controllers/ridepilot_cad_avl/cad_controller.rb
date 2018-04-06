@@ -33,7 +33,7 @@ module RidepilotCadAvl
 
       # Pass locations back to view so they can access the latlng and create the markers
       respond_to do |format|
-        format.js { render locals:{latest_locations: latest_locations} }
+        format.js { render locals:{latest_locations: latest_locations.to_json} }
       end
     end
 
