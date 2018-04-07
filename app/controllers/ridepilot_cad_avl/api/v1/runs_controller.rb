@@ -17,7 +17,8 @@ module RidepilotCadAvl
       if @run
         @run.driver_notes = params[:driver_notes]
         @run.start_odometer = params[:start_odometer]
-        @run.actual_start_time = DateTime.current
+        current_time = DateTime.current
+        @run.actual_start_time = current_time
         @run.save(validate: false)
 
         unless params[:inspections].blank?
@@ -29,7 +30,7 @@ module RidepilotCadAvl
         end
 
         # start leg completed
-        @run.itineraries.run_begin.update_all(status_code: Itinerary::STATUS_COMPLETED)
+        @run.itineraries.run_begin.update_all(status_code: Itinerary::STATUS_COMPLETED, finish_time: current_time)
       end
 
       render success_response({})
@@ -41,11 +42,12 @@ module RidepilotCadAvl
       
       if @run
         @run.end_odometer = params[:end_odometer]
-        @run.actual_end_time = DateTime.current
+        current_time = DateTime.current
+        @run.actual_end_time = current_time
         @run.save(validate: false)
 
         # end leg completed
-        @run.itineraries.run_end.update_all(status_code: Itinerary::STATUS_COMPLETED)
+        @run.itineraries.run_end.update_all(status_code: Itinerary::STATUS_COMPLETED, finish_time: current_time)
       end
 
       render success_response({})
@@ -56,6 +58,25 @@ module RidepilotCadAvl
 
       render success_response({
         data: @run.try(:vehicle_inspections_as_json) || []
+        })
+    end
+
+    # find active run and active itin
+    def driver_run_data
+      if @driver 
+        active_run = Run.where(date: Date.today, driver: @driver)
+          .where.not(start_odometer: nil)
+          .where(end_odometer: nil)
+          .default_order.first
+
+        if active_run 
+          active_itin = active_run.sorted_itineraries.find{|r| r.finish_time.nil?}
+        end
+      end
+
+      render success_response({
+        active_run: active_run ? RunSerializer.new(active_run).serializable_hash : nil,
+        active_itin: active_itin ? ItinerarySerializer.new(active_itin).serializable_hash : nil
         })
     end
   end  

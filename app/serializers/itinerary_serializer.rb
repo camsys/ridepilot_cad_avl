@@ -48,12 +48,11 @@ class ItinerarySerializer
     fare = object.fare
     if fare
       trip = object.trip
+      collected_time = trip.fare_collected_time
       if fare.is_payment?
         fare_amount = trip.fare_amount
-        collected_time = trip.fare_collected_time
       else
         fare_amount = trip.donation.try(:amount)
-        collected_time = trip.donation.try(:updated_at)
       end
       
       {

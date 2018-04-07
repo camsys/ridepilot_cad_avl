@@ -4,8 +4,10 @@ RidepilotCadAvl::Engine.routes.draw do
   namespace :api, defaults: { format: :json } do
     namespace :v1 do 
       post  'driver_sign_in'  => 'driver_sessions#create'
+
       
       get   'runs'            => 'runs#index'
+      get   'driver_run_data' => 'runs#driver_run_data'
       resources :runs, only: [:index] do
         member do
           put 'start' 
