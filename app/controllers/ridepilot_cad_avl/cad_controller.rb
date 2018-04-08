@@ -21,19 +21,14 @@ module RidepilotCadAvl
 
     def update_map_markers
       # Get the runs that match the run ids
-      @runs = Run.for_provider(current_provider_id).for_date(@cad_day).reorder("lower(name)")
-      selected_runs = @runs.where(id: params[:cad][:selected_run_ids])
+      @provider = current_user.current_provider
+      latest_locations = GpsLocation.where(provider_id: current_provider_id).where(run_id: params[:cad][:selected_run_ids]).reorder("log_time DESC")
+      latest_locations = latest_locations.select("DISTINCT ON(run_id) *").reorder("run_id, log_time DESC")
 
-      # Get the latest gps location for each run
-      latest_locations = []
-      selected_runs.each do |run|
-        latest_location = GpsLocation.where(run_id: run.id).where(provider_id: run.provider_id).reorder("log_time").first
-        latest_locations.push(latest_location)
-      end
+      latest_locations = latest_locations.to_json
 
-      # Pass locations back to view so they can access the latlng and create the markers
       respond_to do |format|
-        format.js { render locals:{latest_locations: latest_locations.to_json} }
+        format.js { render locals: {latest_locations: latest_locations} }
       end
     end
 

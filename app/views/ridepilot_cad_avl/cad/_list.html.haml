@@ -59,8 +59,8 @@
       if ($(this).is(':checked')) {
         run_ids.push($(this).data('run-id'));
       }
-      selectRuns(run_ids);
     });
+    selectRuns(run_ids);
   });
 
   function selectRuns(run_ids){
@@ -73,5 +73,6 @@
     $.ajax({
       url: "#{update_map_markers_path}",
       data: data
+      dataType: json
     });
   }
