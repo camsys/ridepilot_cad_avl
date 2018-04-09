@@ -1,0 +1,33 @@
+= render 'cad_map_render_javascript'
+
+:javascript
+  // re-render run checkbox listing
+  function reloadRuns(incomplete_runs_only){
+    var data = {
+      cad: {
+        date: "#{@cad_day}",
+        incomplete_runs_only: incomplete_runs_only
+      }
+    };
+    $.ajax({
+      url: "#{reload_runs_cad_path}",
+      data: data
+    });
+  }
+
+   // load run data into map
+  function reloadRun(run_id){
+    $.ajax({
+      url: "#{reload_run_cad_path}",
+      data: {
+        cad: {
+          run_id: run_id
+        }
+      }
+    });
+  }
+
+  // remove run data from map
+  function removeRun(run_id) {
+    removeVehicle(run_id);
+  }

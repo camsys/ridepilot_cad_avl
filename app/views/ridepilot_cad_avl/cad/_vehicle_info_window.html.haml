@@ -1,0 +1,66 @@
+:ruby
+  run = location.run
+  vehicle = run.vehicle
+  driver = run.driver
+  speed = location.speed ? ("#{location.speed} mph") : 'N/A'
+  has_vehicle_capacity = vehicle.vehicle_type && vehicle.vehicle_type.vehicle_capacity_configurations.any?
+:css
+  .vehicle_info p{
+    line-height: normal !important;
+  }
+
+  .info_header {
+    white-space: nowrap;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .info_title {
+    white-space: nowrap;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .info_vehicle_name {
+    height: 16px;
+    font-weight: bold;
+    margin-top: 3px;
+  }
+
+  .info_update_time {
+    white-space: nowrap;
+    height: 16px;
+    color: #666666;
+    padding-left: 4px;
+    margin-left: 4px;
+    border-left: 1px solid #bebebe;
+  }
+
+  .section_title {
+    font-size: 14px;
+    color: brown;
+  }
+
+
+.vehicle_info
+  .info_header
+    %p.info_title= "#{run.name}"
+    %p
+      %span.info_vehicle_name= vehicle.name
+      %span.info_update_time= "Data updated 0 seconds ago"
+    %p.section_title 
+      %b Info
+    %ul.info_details
+      %li
+        %b Driver: 
+        = " #{driver.try(:user_name) || 'N/A'}"
+      %li
+        %b Speed (mph): 
+        = " #{speed}"
+
+    - if has_vehicle_capacity
+      %p.section_title 
+        %b Vehicle Capacity
+      = render 'vehicle_capacity_configurations/list', vehicle_capacity_configurations: vehicle.vehicle_type.vehicle_capacity_configurations
+      
+

@@ -1,0 +1,5 @@
+- if @run
+  var infoWindowOpen = infoWindow.getMap(); // check if info window was open
+  removeRun(#{@run.id});
+  var vehicle_loc = #{@vehicle_location_data.to_json.try(:html_safe) || {}};
+  drawVehicle(vehicle_loc, infoWindowOpen);

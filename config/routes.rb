@@ -1,6 +1,15 @@
 RidepilotCadAvl::Engine.routes.draw do
+  # CAD display page
   get   'cad_avl'         => 'cad#index'
-  get   'reload_runs'     => 'cad#reload_runs'
+  resource :cad, controller: :cad, only: [] do 
+    collection do 
+      get 'reload_runs'
+      get 'reload_run'
+      get 'vehicle_info'
+    end
+  end
+
+  # APIs for RideAVL
   namespace :api, defaults: { format: :json } do
     namespace :v1 do 
       post  'driver_sign_in'  => 'driver_sessions#create'
