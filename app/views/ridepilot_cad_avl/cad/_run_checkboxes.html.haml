@@ -1,5 +1,5 @@
 .run_checkboxes
   - runs.each do |run|
     %label.run_list
-      %input{type: 'checkbox', 'data-run-id': run.id}
+      %input{type: 'checkbox', data: {run_id: run.id}}
         = run.name

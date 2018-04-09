@@ -4,7 +4,7 @@
     display: block;
   }
 
-  .run_list input {
+  .run_list input, .select_all input {
     vertical-align: initial;
   }
 
@@ -15,63 +15,40 @@
   Select Runs to Show:
   %input#all_toggle{type: 'checkbox', 'data-toggle': 'toggle', 'data-on': 'All Runs', 'data-off': 'Incomplete Only', 'data-size': 'small', 'data-width': '125', checked: 'true'}
 .col-sm-12  
-  %label.run_list
-    %input.selectall{type: 'checkbox'} 
+  %label.select_all
+    %input{type: 'checkbox'} 
       Select All
   %hr{style: 'margin: 0px;'}
   = render 'run_checkboxes', runs: @runs
 
-
 :javascript
-  $('.selectall').click(function() {
-    if ($(this).is(':checked')) {
-      $('.run_list input').prop('checked', true);
-    } else {
-      $('.run_list input').prop('checked', false);
-    }
-  });
-
-  $('#all_toggle').change(function() {
-    if ($(this).prop('checked')){
-      reloadRuns(false);
-    }
-    else {
-      reloadRuns(true);
-    }
-  });
-
-  function reloadRuns(incomplete_runs_only){
-    var data = {
-      cad: {
-        date: "#{@cad_day}",
-        incomplete_runs_only: incomplete_runs_only
-      }
-    };
-    $.ajax({
-      url: "#{reload_runs_path}",
-      data: data
-    });
-  }
-
-  $("div.run_checkboxes input").click(function (){
-    var run_ids = []
-    $("label.run_list input").each(function(){
+  $(function() {
+    $(document).on('change', '.select_all input', function() {
       if ($(this).is(':checked')) {
-        run_ids.push($(this).data('run-id'));
+        $('.run_list input').prop('checked', true).trigger('change');
+      } else {
+        $('.run_list input').prop('checked', false).trigger('change');
       }
     });
-    selectRuns(run_ids);
-  });
 
-  function selectRuns(run_ids){
-    var data = {
-      cad: {
-        date: "#{@cad_day}",
-        selected_run_ids: run_ids
+    $('#all_toggle').change(function() { 
+      $('.select_all input').prop('checked', false).trigger('change');
+      if ($(this).prop('checked')){
+        reloadRuns(false);
       }
-    };
-    $.ajax({
-      url: "#{update_map_markers_path}",
-      data: data
+      else {
+        reloadRuns(true);
+      }
     });
-  }
+
+    $(document).on('change', '.run_checkboxes input', function (){
+      var run_id = $(this).data('run-id');
+
+      if ($(this).is(':checked')) {
+        reloadRun(run_id);
+      } else {
+        removeRun(run_id);
+      }
+    });
+  });
+  

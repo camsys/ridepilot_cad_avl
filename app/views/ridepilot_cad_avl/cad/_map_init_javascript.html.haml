@@ -6,8 +6,9 @@
   has_bounds = @provider.region_se_corner.present? && @provider.region_nw_corner.present?
 
 :javascript
+  var map;
+
   $(function(){
-    var map;
     function resizeMapContainer() {
       // set height as: window size - (page header + footer)
       $('#map').height($(window).height() - 100);  
