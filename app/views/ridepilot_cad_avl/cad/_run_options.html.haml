@@ -14,9 +14,10 @@
       For Selected Runs, Show:
     
     .col-sm-12
-      %label.run_option
-        %input#run_upcoming_path{type: 'checkbox', checked: true}
-          Upcoming Path
+      - if @is_today_or_future
+        %label.run_option
+          %input#run_upcoming_path{type: 'checkbox', checked: true}
+            Upcoming Path
 
       %label.run_option
         %input#run_prior_path{type: 'checkbox'}
