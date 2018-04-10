@@ -9,6 +9,7 @@ module RidepilotCadAvl
       @runs = Run.for_provider(current_provider_id).for_date(@cad_day).reorder("lower(name)")
 
       @is_today = @cad_day == Date.today
+      @is_today_or_past = @cad_day <= Date.today
       @is_today_or_future = @cad_day >= Date.today
     end
 
