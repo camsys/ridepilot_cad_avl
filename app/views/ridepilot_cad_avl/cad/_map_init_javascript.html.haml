@@ -14,30 +14,32 @@
   });
 
   // set up timer to update date updated time in infoWindow
-  var timer = 0;
-  var infoUpdateTimer;
-  google.maps.event.addListener(infoWindow, 'content_changed', function(event) {
-    clearInterval(infoUpdateTimer);
-    timer = 0;
-    infoUpdateTimer = setInterval(function() { 
-      $('.info_update_time').text('Data updated ' + (++ timer) + ' seconds ago'); 
-    }, 1000);
-  });
-  
-  // refresh map on interval
-  function refreshMapOnInterval() {
-    setInterval(function() {
-      refreshMap();
-    }, #{ApplicationSetting['cad_avl.gps_interval_seconds'] || 30} * 1000);
-  }
-  refreshMapOnInterval();
-
-  // one method to refresh map data
-  function refreshMap() {
-    console.log('refreshing map...');
-    $('.run_list input:checked').each(function() {
-      reloadRun($(this).data('run-id'));
+  if(#{@is_today || false}) {
+    var timer = 0;
+    var infoUpdateTimer;
+    google.maps.event.addListener(infoWindow, 'content_changed', function(event) {
+      clearInterval(infoUpdateTimer);
+      timer = 0;
+      infoUpdateTimer = setInterval(function() { 
+        $('.info_update_time').text('Data updated ' + (++ timer) + ' seconds ago'); 
+      }, 1000);
     });
+
+    // one method to refresh map data
+    function refreshMap() {
+      console.log('refreshing map...');
+      $('.run_list input:checked').each(function() {
+        reloadRun($(this).data('run-id'));
+      });
+    }
+    
+    // refresh map on interval
+    function refreshMapOnInterval() {
+      setInterval(function() {
+        refreshMap();
+      }, #{ApplicationSetting['cad_avl.gps_interval_seconds'] || 30} * 1000);
+    }
+    refreshMapOnInterval();
   }
 
 

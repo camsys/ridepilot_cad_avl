@@ -7,6 +7,8 @@ module RidepilotCadAvl
     def index
       @provider = current_provider
       @runs = Run.for_provider(current_provider_id).for_date(@cad_day).reorder("lower(name)")
+
+      @is_today = @cad_day == Date.today
     end
 
     def reload_runs

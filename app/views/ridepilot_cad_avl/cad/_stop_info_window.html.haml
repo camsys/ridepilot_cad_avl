@@ -1,9 +1,8 @@
 :ruby
   address = itin.address
   customer = itin.trip.try(:customer)
-  label = case itin.leg_flag
-  when 0, 3
-    "Garage"
+  is_garage = [0, 3].include?(itin.leg_flag)
+  stop_label = case itin.leg_flag
   when 1
     "Pick Up #{customer.try(:name)}"
   when 2
@@ -50,19 +49,32 @@
 
 
 .stop_info
-  .info_header
-    %p.info_title= "#{label}"
-    %p
-      %span.info_stop_name= address.one_line_text
-      %span.info_update_time= "Data updated 0 seconds ago"
-    %p.section_title 
-      %b Info
-    %ul.info_details
-      %li
-        %b Scheduled Time: 
-        = itin.time ? format_time_for_listing(itin.time) : 'N/A'
-      %li
-        %b ETA: 
-        = itin.eta ? format_time_for_listing(itin.eta) : 'N/A'
+  - if is_garage
+    .info_header
+      %p.info_title Garage
+      %p
+        %span.info_stop_name= address.one_line_text
+  - else
+    .info_header
+      %p.info_title= "#{label}"
+      %p
+        %span.info_stop_name= address.one_line_text
+        %span.info_update_time= "Data updated 0 seconds ago"
+      %p.section_title 
+        %b Info
+      %ul.info_details
+        %li
+          %b Scheduled Time: 
+          = itin.time ? format_time_for_listing(itin.time) : 'N/A'
+        %li
+          - if itin.finish_time
+            - if itin.status_code == Itinerary::STATUS_COMPLETED
+              %b Completed At:
+              = format_time_for_listing(itin.finish_time)
+            - elsif itin.status_code == Itinerary::STATUS_OTHER
+              %label.label.label-danger No Show
+          - else
+            %b ETA: 
+            = itin.eta ? format_time_for_listing(itin.eta) : 'N/A'
       
 
