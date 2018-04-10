@@ -5,7 +5,9 @@ RidepilotCadAvl::Engine.routes.draw do
     collection do 
       get 'reload_runs'
       get 'reload_run'
+      get 'load_run_stops'
       get 'vehicle_info'
+      get 'stop_info'
     end
   end
 

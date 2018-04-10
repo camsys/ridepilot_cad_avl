@@ -15,13 +15,46 @@
     
     .col-sm-12
       %label.run_option
-        %input{type: 'checkbox', checked: true}
+        %input#run_upcoming_path{type: 'checkbox', checked: true}
           Upcoming Path
 
       %label.run_option
-        %input{type: 'checkbox'}
+        %input#run_prior_path{type: 'checkbox'}
           Prior Path
 
       %label.run_option
-        %input{type: 'checkbox'}
+        %input#run_stops{type: 'checkbox'}
           Garage, pickup and dropoff locations
+
+:javascript
+  $(function() {
+    $('#run_stops').change(function() {
+      if($(this).is(':checked')) {
+        drawSelectedRunStops();
+      } else {
+        removeAllRunStops();
+      }
+    });
+
+    function drawSelectedRunStops() {
+      var run_ids = [];
+      $('.run_list input:checked').each(function() {
+        run_ids.push($(this).data('run-id'));
+      });
+
+      $.ajax({
+        url: "#{load_run_stops_cad_path}",
+        data: {
+          run_ids: run_ids.join(',')
+        }
+      });
+    }
+
+    function removeAllRunStops() {
+      if(stop_markers) {
+        for(var run_id in stop_markers) {
+          removeRunStops(run_id);
+        }
+      }
+    }
+  });

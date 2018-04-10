@@ -1,0 +1,3 @@
+- unless @itins_data.blank?
+  var itins_data = #{@itins_data.to_json.html_safe};
+  itins_data.forEach(function(itin_data) { drawRunStop(itin_data); });

@@ -1,0 +1,68 @@
+:ruby
+  address = itin.address
+  customer = itin.trip.try(:customer)
+  label = case itin.leg_flag
+  when 0, 3
+    "Garage"
+  when 1
+    "Pick Up #{customer.try(:name)}"
+  when 2
+    "Drop Off #{customer.try(:name)}"
+  end
+
+
+:css
+  .stop_info p{
+    line-height: normal !important;
+  }
+
+  .info_header {
+    white-space: nowrap;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .info_title {
+    white-space: nowrap;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .info_stop_name {
+    height: 16px;
+    font-weight: bold;
+    margin-top: 3px;
+  }
+
+  .info_update_time {
+    white-space: nowrap;
+    height: 16px;
+    color: #666666;
+    padding-left: 4px;
+    margin-left: 4px;
+    border-left: 1px solid #bebebe;
+  }
+
+  .section_title {
+    font-size: 14px;
+    color: brown;
+  }
+
+
+.stop_info
+  .info_header
+    %p.info_title= "#{label}"
+    %p
+      %span.info_stop_name= address.one_line_text
+      %span.info_update_time= "Data updated 0 seconds ago"
+    %p.section_title 
+      %b Info
+    %ul.info_details
+      %li
+        %b Scheduled Time: 
+        = itin.time ? format_time_for_listing(itin.time) : 'N/A'
+      %li
+        %b ETA: 
+        = itin.eta ? format_time_for_listing(itin.eta) : 'N/A'
+      
+

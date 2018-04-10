@@ -28,11 +28,22 @@ module RidepilotCadAvl
         @vehicle_location_data = GpsLocationSerializer.new(@vehicle_location).serializable_hash
       end
 
+      prepare_run_stops_data(@run.id) if params[:options][:stops] == 'true'
+
       respond_to :js
+    end
+
+    def load_run_stops
+      run_ids = params[:run_ids].split(',') unless params[:run_ids].blank?
+      prepare_run_stops_data(run_ids)
     end
 
     def vehicle_info
       @vehicle_location = GpsLocation.find_by_id(params[:location_id])
+    end
+
+    def stop_info
+      @itin = Itinerary.find_by_id(params[:itinerary_id])
     end
 
     private
@@ -43,6 +54,17 @@ module RidepilotCadAvl
       else
         Date.today
       end
+    end
+
+    def prepare_run_stops_data(run_ids)
+      @itins_data = Run.where(id: run_ids).joins(itineraries: :address).pluck(
+        "itineraries.id",
+        "ST_Y(addresses.the_geom::geometry) as longitude",
+        "ST_X(addresses.the_geom::geometry) as latitude",
+        :run_id, 
+        :leg_flag, 
+        :status_code
+        )
     end
 
   end

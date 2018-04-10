@@ -1,0 +1,4 @@
+- if @itin
+  infoWindow.type = "Stop";
+  infoWindow.itin_id = #{@itin.id};
+  infoWindow.setContent("#{ j render 'stop_info_window', itin: @itin }");

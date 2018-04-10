@@ -1,5 +1,3 @@
-= render 'cad_map_render_javascript'
-
 :javascript
   // re-render run checkbox listing
   function reloadRuns(incomplete_runs_only){
@@ -20,6 +18,11 @@
     $.ajax({
       url: "#{reload_run_cad_path}",
       data: {
+        options: {
+          upcoming_path: $('#run_upcoming_path').is(':checked'),
+          prior_path: $('#run_prior_path').is(':checked'),
+          stops: $('#run_stops').is(':checked')
+        },
         cad: {
           run_id: run_id
         }
@@ -30,4 +33,5 @@
   // remove run data from map
   function removeRun(run_id) {
     removeVehicle(run_id);
+    removeRunStops(run_id);
   }

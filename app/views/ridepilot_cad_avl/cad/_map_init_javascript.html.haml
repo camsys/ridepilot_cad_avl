@@ -1,12 +1,45 @@
 :ruby
   center_lat = @provider.viewport_center ? @provider.viewport_center.y : GOOGLE_MAP_DEFAULTS[:viewport][:center_lat]
   center_lng = @provider.viewport_center ? @provider.viewport_center.x : GOOGLE_MAP_DEFAULTS[:viewport][:center_lng]
-  zoom = @provider.viewport_zoom || GOOGLE_MAP_DEFAULTS[:viewport][:zoom]
+  zoom = @provider.viewport_zoom || GOOGLE_MAP_DEFAULTS[:viewport][:zoom] || 10
 
   has_bounds = @provider.region_se_corner.present? && @provider.region_nw_corner.present?
 
 :javascript
   var map;
+
+  // generic info window
+  var infoWindow = new google.maps.InfoWindow({
+    content: "loading..."
+  });
+
+  // set up timer to update date updated time in infoWindow
+  var timer = 0;
+  var infoUpdateTimer;
+  google.maps.event.addListener(infoWindow, 'content_changed', function(event) {
+    clearInterval(infoUpdateTimer);
+    timer = 0;
+    infoUpdateTimer = setInterval(function() { 
+      $('.info_update_time').text('Data updated ' + (++ timer) + ' seconds ago'); 
+    }, 1000);
+  });
+  
+  // refresh map on interval
+  function refreshMapOnInterval() {
+    setInterval(function() {
+      refreshMap();
+    }, #{ApplicationSetting['cad_avl.gps_interval_seconds'] || 30} * 1000);
+  }
+  refreshMapOnInterval();
+
+  // one method to refresh map data
+  function refreshMap() {
+    console.log('refreshing map...');
+    $('.run_list input:checked').each(function() {
+      reloadRun($(this).data('run-id'));
+    });
+  }
+
 
   $(function(){
     function resizeMapContainer() {
