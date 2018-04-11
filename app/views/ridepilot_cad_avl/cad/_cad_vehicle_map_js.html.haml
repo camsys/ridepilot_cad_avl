@@ -41,7 +41,7 @@
       requestVehicleInfo(loc_id);
     });
 
-    if(infoWindowOpen && infoWindow.type == 'Vehicle' && infoWindow.run_id == raw_data.run_id) {
+    if(infoWindowOpen && infoWindow.type == 'Vehicle' && infoWindow.run_id == loc_data.run_id) {
       // re-load info window
       new google.maps.event.trigger( marker, 'click' );
     }

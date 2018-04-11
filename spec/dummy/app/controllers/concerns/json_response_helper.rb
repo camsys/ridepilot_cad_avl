@@ -43,7 +43,7 @@ module JsonResponseHelper
     def call(env)
       begin
         @app.call(env)
-      rescue ActionDispatch::ParamsParser::ParseError => error
+      rescue ActionDispatch::Http::Parameters::ParseError => error
         if env['CONTENT_TYPE'] =~ /application\/json/
           error_output = {request: "There was a problem in the JSON you submitted.", error: error}
           return [
