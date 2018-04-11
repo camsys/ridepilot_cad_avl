@@ -24,7 +24,8 @@
           stops: $('#run_stops').is(':checked')
         },
         cad: {
-          run_id: run_id
+          run_id: run_id,
+          last_log_time: (last_log_time ? last_log_time.toISOString() : null)
         }
       }
     });
@@ -34,4 +35,5 @@
   function removeRun(run_id) {
     removeVehicle(run_id);
     removeRunStops(run_id);
+    removePriorPath(run_id);
   }

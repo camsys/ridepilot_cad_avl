@@ -7,6 +7,7 @@
 
 :javascript
   var map;
+  var last_log_time;
 
   // generic info window
   var infoWindow = new google.maps.InfoWindow({
@@ -27,6 +28,7 @@
 
     // one method to refresh map data
     function refreshMap() {
+      last_log_time = new Date();
       console.log('refreshing map...');
       $('.run_list input:checked').each(function() {
         reloadRun($(this).data('run-id'));

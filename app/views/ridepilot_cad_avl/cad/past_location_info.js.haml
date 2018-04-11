@@ -1,0 +1,4 @@
+- if @past_location
+  infoWindow.type = "PastLocation";
+  infoWindow.itin_id = #{@past_location.id};
+  infoWindow.setContent("#{ j render 'vehicle_info_window', location: @past_location, is_real_time: false }");

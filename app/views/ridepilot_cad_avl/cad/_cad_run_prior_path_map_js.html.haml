@@ -1,0 +1,88 @@
+:javascript
+  // store list of prior_path markers
+  var prior_path_markers = {};
+  
+  // draw run prior_path location on map
+  function drawPriorPath(run_id, path_data, infoWindowOpen) {
+    console.log(path_data);
+    if(!path_data || path_data.length == 0) {
+      return;
+    }
+
+    renderLoadedPriorPath(run_id);
+
+    path_data.forEach(function(loc_data) {
+      drawPastVehicleLocation(loc_data, infoWindowOpen);
+    });
+  }
+
+  function drawPastVehicleLocation(raw_data, infoWindowOpen) {
+    if(!raw_data) {
+      return;
+    }
+
+    var loc_data = raw_data.attributes;
+    if(!loc_data || !loc_data.latitude || !loc_data.longitude) {
+      return;
+    }
+
+    // define marker 
+    var marker = new google.maps.Marker({
+      position: {lat: loc_data.latitude, lng: loc_data.longitude},
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 3,
+        strokeColor: "gray",
+        strokeWeight: 6
+      },
+      map: map
+    });
+
+    // save reference as need to hide marker
+    if(!prior_path_markers[loc_data.run_id]) {
+      prior_path_markers[loc_data.run_id] = [];
+    }
+    prior_path_markers[loc_data.run_id].push(marker);
+
+    var loc_id = raw_data.id;
+    marker.addListener('click', function() {
+      infoWindow.open(map, marker);
+      infoWindow.setContent('loading...');
+
+      //ajax request content
+      requestPastLocationInfo(loc_id);
+    });
+
+    if(infoWindowOpen && infoWindow.type == 'PastLocation' && infoWindow.itin_id == loc_id) {
+      // re-load info window
+      new google.maps.event.trigger( marker, 'click' );
+    }
+  }
+
+  function requestPastLocationInfo(loc_id) {
+    $.ajax({
+      url: "#{past_location_info_cad_path}",
+      data: {
+        location_id: loc_id
+      }
+    });
+  }
+
+
+  // remove prior path markers for a run
+  function removePriorPath(run_id) {
+    if(prior_path_markers[run_id] && prior_path_markers[run_id].length > 0) {
+      prior_path_markers[run_id].forEach(function(marker) {
+        marker.setMap(null);
+      });
+    }
+  }
+
+  // show (prviously loaded) prior path markers
+  function renderLoadedPriorPath(run_id) {
+    if(prior_path_markers[run_id] && prior_path_markers[run_id].length > 0) {
+      prior_path_markers[run_id].forEach(function(marker) {
+        marker.setMap(map);
+      });
+    }
+  }

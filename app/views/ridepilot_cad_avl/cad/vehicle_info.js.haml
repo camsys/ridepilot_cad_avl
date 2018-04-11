@@ -1,4 +1,4 @@
 - if @vehicle_location
   infoWindow.type = "Vehicle";
   infoWindow.run_id = #{@vehicle_location.run_id};
-  infoWindow.setContent("#{ j render 'vehicle_info_window', location: @vehicle_location }");
+  infoWindow.setContent("#{ j render 'vehicle_info_window', location: @vehicle_location, is_real_time: true }");

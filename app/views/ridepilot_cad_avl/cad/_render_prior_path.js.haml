@@ -1,0 +1,5 @@
+- if @run && @prior_locations
+  var infoWindowOpen = infoWindow.getMap(); // check if info window was open
+  var prior_locations = #{@prior_locations[:data].to_json.try(:html_safe) || []};
+  drawPriorPath(#{@run.id}, prior_locations, infoWindowOpen);
+

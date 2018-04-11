@@ -3,7 +3,7 @@
   vehicle = run.vehicle
   driver = run.driver
   speed = location.speed ? ("#{location.speed} mph") : 'N/A'
-  has_vehicle_capacity = vehicle.vehicle_type && vehicle.vehicle_type.vehicle_capacity_configurations.any?
+  has_vehicle_capacity = is_real_time && vehicle.vehicle_type && vehicle.vehicle_type.vehicle_capacity_configurations.any?
 :css
   .vehicle_info p{
     line-height: normal !important;
@@ -47,7 +47,8 @@
     %p.info_title= "#{run.name}"
     %p
       %span.info_vehicle_name= vehicle.name
-      %span.info_update_time= "Data updated 0 seconds ago"
+      - if is_real_time
+        %span.info_update_time= "Data updated 0 seconds ago"
     %p.section_title 
       %b Info
     %ul.info_details

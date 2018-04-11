@@ -33,6 +33,7 @@ module RidepilotCadAvl
       end
 
       prepare_run_stops_data(@run.id) if params[:options][:stops] == 'true'
+      prepare_prior_path_data if params[:options][:prior_path] == 'true'
 
       respond_to :js
     end
@@ -42,8 +43,17 @@ module RidepilotCadAvl
       prepare_run_stops_data(run_ids)
     end
 
+    def load_prior_path
+      @run = Run.find_by_id(params[:cad][:run_id])
+      prepare_prior_path_data
+    end
+
     def vehicle_info
       @vehicle_location = GpsLocation.find_by_id(params[:location_id])
+    end
+
+    def past_location_info
+      @past_location = GpsLocation.find_by_id(params[:location_id])
     end
 
     def stop_info
@@ -69,6 +79,17 @@ module RidepilotCadAvl
         :leg_flag, 
         :status_code
         )
+    end
+
+    def prepare_prior_path_data
+      if @run
+        new_locations = GpsLocation.where(run_id: @run.id)
+        unless params[:cad][:last_log_time].blank?
+          last_log_time = DateTime.parse params[:cad][:last_log_time]
+          new_locations = new_locations.where("log_time > ?", last_log_time)
+        end
+        @prior_locations = GpsLocationSerializer.new(new_locations).serializable_hash
+      end
     end
 
   end
