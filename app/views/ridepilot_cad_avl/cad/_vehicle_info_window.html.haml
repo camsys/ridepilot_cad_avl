@@ -49,6 +49,8 @@
       %span.info_vehicle_name= vehicle.name
       - if is_real_time
         %span.info_update_time= "Data updated 0 seconds ago"
+      - else
+        %span= location.log_time.try(:strftime, '%r')
     %p.section_title 
       %b Info
     %ul.info_details

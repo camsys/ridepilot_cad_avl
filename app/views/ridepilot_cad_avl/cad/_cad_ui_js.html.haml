@@ -1,12 +1,15 @@
 :javascript
   // re-render run checkbox listing
-  function reloadRuns(incomplete_runs_only){
+  function reloadRuns(incomplete_runs_only, is_refresh){
+
     var data = {
+      is_refresh: is_refresh,
       cad: {
         date: "#{@cad_day}",
         incomplete_runs_only: incomplete_runs_only
       }
     };
+
     $.ajax({
       url: "#{reload_runs_cad_path}",
       data: data
@@ -31,9 +34,27 @@
     });
   }
 
+  // refresh run checkboxes
+  function removeRuns(run_ids) {
+    run_ids.forEach(function(run_id) {
+      removeRun(run_id);
+    });
+  }
+
   // remove run data from map
   function removeRun(run_id) {
     removeVehicle(run_id);
     removeRunStops(run_id);
     removePriorPath(run_id);
+  }
+
+  function getSelectedRunIds() {
+    var pre_run_ids = [];
+    $('.run_list input:checked').each(function() {
+      var run_id = $(this).data('run-id');
+
+      pre_run_ids.push(run_id);
+    });
+
+    return pre_run_ids;
   }

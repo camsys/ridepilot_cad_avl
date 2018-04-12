@@ -30,9 +30,9 @@
     function refreshMap() {
       last_log_time = new Date();
       console.log('refreshing map...');
-      $('.run_list input:checked').each(function() {
-        reloadRun($(this).data('run-id'));
-      });
+      // refresh run list
+      var incomplete_only = !($('#all_toggle').is(":checked"));
+      reloadRuns(incomplete_only, true);
     }
     
     // refresh map on interval

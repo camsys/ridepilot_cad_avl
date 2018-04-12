@@ -16,7 +16,8 @@ module RidepilotCadAvl
     def reload_runs
       @runs = Run.for_provider(current_provider_id).for_date(@cad_day).reorder("lower(name)")
       
-      if params[:cad] && params[:cad][:incomplete_runs_only] == 'true'
+      @incomplete_only = params[:cad] && params[:cad][:incomplete_runs_only] == 'true'
+      if @incomplete_only
         @runs = @runs.where(end_odometer: nil)
       end
 
@@ -25,15 +26,20 @@ module RidepilotCadAvl
 
     def reload_run
       @run = Run.find_by_id(params[:cad][:run_id])
-      run_in_progress = @run && @run.date == Date.today && @run.start_odometer && !@run.end_odometer
-      
-      if run_in_progress
-        @vehicle_location = GpsLocation.where(run_id: @run.id).reorder("log_time DESC").first
-        @vehicle_location_data = GpsLocationSerializer.new(@vehicle_location).serializable_hash
-      end
+      if @run 
+        # exclude complete run if showing only incomplete ones
+        unless params[:cad][:incomplete_runs_only] == 'true' && @run.end_odometer
+          run_in_progress = @run.date == Date.today && @run.start_odometer && !@run.end_odometer
+          
+          if run_in_progress
+            @vehicle_location = GpsLocation.where(run_id: @run.id).reorder("log_time DESC").first
+            @vehicle_location_data = GpsLocationSerializer.new(@vehicle_location).serializable_hash
+          end
 
-      prepare_run_stops_data(@run.id) if params[:options][:stops] == 'true'
-      prepare_prior_path_data if params[:options][:prior_path] == 'true'
+          prepare_run_stops_data(@run.id) if params[:options][:stops] == 'true'
+          prepare_prior_path_data if params[:options][:prior_path] == 'true'
+        end
+      end
 
       respond_to :js
     end
