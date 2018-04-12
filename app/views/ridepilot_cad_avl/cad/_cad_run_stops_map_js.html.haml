@@ -55,25 +55,29 @@
           strokeColor: 'red',
           fillColor: 'red',
           fillOpacity: 1,
-          scale: 4
+          scale: 3
         };
         break;
       case 1:
         // pickup
         icon = {
-          path: google.maps.SymbolPath.CIRCLE,
+          path: 'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
           strokeColor: 'blue',
-          scale: 8,
-          strokeWeight: 4
+          fillColor: 'blue',
+          fillOpacity: 1,
+          scale: 0.5,
+          labelOrigin: new google.maps.Point(0, -25)
         }
         break;
       case 2:
         // dropoff
         icon = {
-          path: google.maps.SymbolPath.CIRCLE,
+          path: 'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
           strokeColor: 'black',
-          scale: 8,
-          strokeWeight: 4
+          fillColor: 'black',
+          fillOpacity: 1,
+          scale: 0.5,
+          labelOrigin: new google.maps.Point(0, -25)
         }
         break;
       default:
@@ -102,7 +106,7 @@
           text: "P",
           fontWeight: "bold",
           fontSize: '10px',
-          color: 'blue'
+          color: 'white'
         };
         break;
       case 2:
@@ -111,7 +115,7 @@
           text: "D",
           fontWeight: "bold",
           fontSize: '10px',
-          color: 'black'
+          color: 'white'
         };
         break;
       default:
