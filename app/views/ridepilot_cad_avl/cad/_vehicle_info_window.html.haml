@@ -4,6 +4,8 @@
   driver = run.driver
   speed = location.speed ? ("#{location.speed} mph") : 'N/A'
   has_vehicle_capacity = is_real_time && vehicle.vehicle_type && vehicle.vehicle_type.vehicle_capacity_configurations.any?
+
+  itin = Itinerary.find_by_id(location.itinerary_id)
 :css
   .vehicle_info p{
     line-height: normal !important;
@@ -27,7 +29,7 @@
     margin-top: 3px;
   }
 
-  .info_update_time {
+  .info_time {
     white-space: nowrap;
     height: 16px;
     color: #666666;
@@ -48,9 +50,9 @@
     %p
       %span.info_vehicle_name= vehicle.name
       - if is_real_time
-        %span.info_update_time= "Data updated 0 seconds ago"
+        %span.info_time.info_update_time= "Data updated 0 seconds ago"
       - else
-        %span= location.log_time.try(:strftime, '%r')
+        %span.info_time= location.log_time.try(:strftime, '%r')
     %p.section_title 
       %b Info
     %ul.info_details
@@ -65,5 +67,8 @@
       %p.section_title 
         %b Vehicle Capacity
       = render 'vehicle_capacity_configurations/list', vehicle_capacity_configurations: vehicle.vehicle_type.vehicle_capacity_configurations
+
+    = render 'vehicle_occupancy', run: run, itin: itin
+
       
 

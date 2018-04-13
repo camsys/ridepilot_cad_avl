@@ -1,0 +1,15 @@
+:ruby 
+  itin_occupancy = nil
+  if itin && !["run_begin", "run_end"].include?(itin.itin_id)
+    itin_occupancy = get_itin_occupancy(run, itin.itin_id)
+  end
+
+  capacity_types_hash = CapacityType.by_provider(current_provider).order(:name).pluck(:id,:name).to_h
+
+%p.section_title 
+  %b Occupancy
+%ul
+  - capacity_types_hash.each do |c_id, c_name|
+    %li
+      %b= "#{c_name}: "
+      = (itin_occupancy && itin_occupancy[c_id].to_i || 0)
