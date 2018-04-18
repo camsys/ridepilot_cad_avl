@@ -1,6 +1,9 @@
 :javascript
   // store list of stop markers
   var stop_markers = {};
+
+  // cluster marker
+  var stopMarkerCluster;
   
   // draw run stop location on map
   function drawRunStop(itin_data) {
@@ -15,14 +18,22 @@
     var leg_flag = itin_data[4];
     var stats_code = itin_data[5];
 
+    if(lat == null || lng == null) {
+      return;
+    }
+
     // define marker 
     var marker = new google.maps.Marker({
       position: {lat: lat, lng: lng},
       icon: getIcon(leg_flag),
-      label: getMarkerLabel(leg_flag),
-      draggable: true,
-      map: map
+      label: getMarkerLabel(leg_flag)
     });
+
+    if(stopMarkerCluster) {
+      stopMarkerCluster.addMarker(marker);
+    } else {
+      marker.setMap(map);
+    }
 
     // save reference as need to hide marker
     if(!stop_markers[run_id]) {
@@ -30,7 +41,7 @@
     }
     stop_markers[run_id].push(marker);
 
-    marker.addListener('click', function() {
+    marker.addListener('spider_click', function() {
       infoWindow.open(map, marker);
       infoWindow.setContent('loading...');
 
@@ -40,7 +51,7 @@
 
     if(infoWindow.getMap() && infoWindow.type == 'Stop' && infoWindow.itin_id == itin_id) {
       // re-load info window
-      new google.maps.event.trigger( marker, 'click' );
+      new google.maps.event.trigger( marker, 'spider_click' );
     }
   }
 
@@ -129,7 +140,11 @@
   function removeRunStops(run_id) {
     if(stop_markers[run_id] && stop_markers[run_id].length > 0) {
       stop_markers[run_id].forEach(function(marker) {
-        marker.setMap(null);
+        if(stopMarkerCluster) {
+          stopMarkerCluster.removeMarker(marker);
+        } else {
+          marker.setMap(null);
+        }
       });
 
       delete stop_markers[run_id];

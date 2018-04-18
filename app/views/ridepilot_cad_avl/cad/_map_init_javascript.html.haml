@@ -72,6 +72,14 @@
 
         map.fitBounds(bounds);
       }
+
+      // init marker cluster
+      stopMarkerCluster = new OverlappingMarkerSpiderfier(map, {
+        markersWontMove: true,
+        markersWontHide: true,
+        basicFormatEvents: true,
+        keepSpiderfied: true
+      });
     }
 
     // create map
