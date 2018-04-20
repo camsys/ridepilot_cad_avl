@@ -1,0 +1,50 @@
+:javascript
+  // store list of upcoming_path markers
+  var upcoming_path_lines = {};
+
+  var directionsService = new google.maps.DirectionsService();
+  
+  // draw run upcoming_path location on map
+  function drawUpcomingPath(run_id, start_latlng, end_latlng, waypoints_latlngs) {
+    if(!start_latlng || !end_latlng) {
+      return;
+    }
+
+    directionsDisplay = new google.maps.DirectionsRenderer({
+      map: map,
+      suppressMarkers: true
+    });
+    upcoming_path_lines[run_id] = directionsDisplay;
+
+    var origin = new google.maps.LatLng(start_latlng[0], start_latlng[1]);
+    var dest = new google.maps.LatLng(end_latlng[0], end_latlng[1]);
+    var waypoints = [];
+    waypoints_latlngs.forEach(function(pt) {
+      if(pt && pt.length == 2) {
+        waypoints.push({
+          location: new google.maps.LatLng(pt[0], pt[1]),
+          stopover: true
+        });
+      }
+    });
+
+    var request = {
+      origin: origin,
+      destination: dest,
+      waypoints: waypoints,
+      travelMode: 'DRIVING'
+    };
+
+    directionsService.route(request, function(result, status) {
+      if (status == 'OK') {
+        directionsDisplay.setDirections(result);
+      }
+    });
+  }
+
+
+  function removeUpcomingPath(run_id) {
+    if(upcoming_path_lines[run_id]) {
+      upcoming_path_lines[run_id].setMap(null);
+    }
+  }

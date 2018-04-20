@@ -46,6 +46,14 @@
       }
     });
 
+    $('#run_uncoming_path').change(function() {
+      if($(this).is(':checked')) {
+        requestUncomingPath();
+      } else {
+        removeAllUncomingPath();
+      }
+    });
+
     function drawSelectedRunStops() {
       var run_ids = [];
       $('.run_list input:checked').each(function() {
@@ -74,6 +82,19 @@
       });
     }
 
+    function requestUncomingPath() {
+      $('.run_list input:checked').each(function() {
+        $.ajax({
+          url: "#{load_upcoming_path_cad_path}",
+          data: {
+            cad: {
+              run_id: $(this).data('run-id')
+            }
+          }
+        });
+      });
+    }
+
     function removeAllRunStops() {
       if(stop_markers) {
         for(var run_id in stop_markers) {
@@ -86,6 +107,14 @@
       if(prior_path_lines) {
         for(var run_id in prior_path_lines) {
           removePriorPath(run_id);
+        }
+      }
+    }
+
+    function removeAllUncomingPath() {
+      if(uncoming_path_lines) {
+        for(var run_id in uncoming_path_lines) {
+          removeUncomingPath(run_id);
         }
       }
     }
