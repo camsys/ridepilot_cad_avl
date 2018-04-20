@@ -94,7 +94,7 @@ module RidepilotCadAvl
           last_log_time = DateTime.parse params[:cad][:last_log_time]
           new_locations = new_locations.where("log_time > ?", last_log_time)
         end
-        @prior_locations = GpsLocationSerializer.new(new_locations).serializable_hash
+        @prior_locations = new_locations.pluck(:latitude, :longitude)
       end
     end
 
