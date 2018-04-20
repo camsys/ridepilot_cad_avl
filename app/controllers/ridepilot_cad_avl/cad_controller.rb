@@ -38,7 +38,7 @@ module RidepilotCadAvl
 
           prepare_run_stops_data(@run.id) if params[:options][:stops] == 'true'
           prepare_prior_path_data if params[:options][:prior_path] == 'true'
-          prepare_uncoming_path_data if params[:options][:upcoming_path] == 'true'
+          prepare_upcoming_path_data if params[:options][:upcoming_path] == 'true'
         end
       end
 
@@ -105,7 +105,7 @@ module RidepilotCadAvl
       end
     end
 
-    def prepare_uncoming_path_data
+    def prepare_upcoming_path_data
       if @run
         # get start location   
         if @run_in_progress

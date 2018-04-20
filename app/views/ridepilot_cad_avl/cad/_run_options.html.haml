@@ -46,11 +46,11 @@
       }
     });
 
-    $('#run_uncoming_path').change(function() {
+    $('#run_upcoming_path').change(function() {
       if($(this).is(':checked')) {
-        requestUncomingPath();
+        requestUpcomingPath();
       } else {
-        removeAllUncomingPath();
+        removeAllUpcomingPath();
       }
     });
 
@@ -82,7 +82,7 @@
       });
     }
 
-    function requestUncomingPath() {
+    function requestUpcomingPath() {
       $('.run_list input:checked').each(function() {
         $.ajax({
           url: "#{load_upcoming_path_cad_path}",
@@ -111,10 +111,10 @@
       }
     }
 
-    function removeAllUncomingPath() {
-      if(uncoming_path_lines) {
-        for(var run_id in uncoming_path_lines) {
-          removeUncomingPath(run_id);
+    function removeAllUpcomingPath() {
+      if(upcoming_path_lines) {
+        for(var run_id in upcoming_path_lines) {
+          removeUpcomingPath(run_id);
         }
       }
     }
