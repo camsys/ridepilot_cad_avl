@@ -40,6 +40,7 @@ RidepilotCadAvl::Engine.routes.draw do
           put 'noshow' 
           put 'undo'
           put 'track_location'
+          put 'update_eta'
         end 
       end
 

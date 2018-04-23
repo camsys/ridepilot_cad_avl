@@ -163,6 +163,34 @@ module RidepilotCadAvl
       render success_response({})
     end
 
+    def update_eta
+       @itin = Itinerary.find_by_id(params[:id])
+      if @itin
+        run = @itin.run 
+        old_eta = @itin.eta.try(:to_datetime)
+        new_eta = DateTime.parse(params[:eta]) unless params[:eta].blank?
+        eta_diff_seconds = ((new_eta - old_eta) * 24 * 60 * 60).to_i if new_eta && old_eta
+        @itin.eta = new_eta 
+        @itin.save(validate: false)
+
+        if eta_diff_seconds && eta_diff_seconds != 0
+          itins = run.sorted_itineraries(true)
+          itin_index = itins.index(@itin)
+          if itin_index >= 0
+            itins[itin_index+1..-1].each do |itin|
+              if itin.eta 
+                itin.eta = itin.eta + (eta_diff_seconds).seconds 
+                itin.save(validate: false)
+              end
+            end
+          end
+        end
+        
+      end
+
+      render success_response({})
+    end
+
     private
 
     def itin_params

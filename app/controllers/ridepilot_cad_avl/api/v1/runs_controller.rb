@@ -21,6 +21,12 @@ module RidepilotCadAvl
         @run.actual_start_time = current_time
         @run.save(validate: false)
 
+        @run.from_garage_address ||= @run.build_from_garage_address
+        if params[:longitude] && params[:latitude]
+          @run.from_garage_address.the_geom = Address.compute_geom(params[:latitude], params[:longitude])
+          @run.from_garage_address.save
+        end
+
         unless params[:inspections].blank?
           params[:inspections].each do |insp|
             run_insp = @run.run_vehicle_inspections.where(vehicle_inspection_id: insp[:id]).first_or_create
@@ -45,6 +51,12 @@ module RidepilotCadAvl
         current_time = DateTime.current
         @run.actual_end_time = current_time
         @run.save(validate: false)
+
+        @run.to_garage_address ||= @run.build_to_garage_address
+        if params[:longitude] && params[:latitude]
+          @run.to_garage_address.the_geom = Address.compute_geom(params[:latitude], params[:longitude])
+          @run.to_garage_address.save
+        end
 
         # end leg completed
         @run.itineraries.run_end.update_all(status_code: Itinerary::STATUS_COMPLETED, finish_time: current_time)
@@ -74,9 +86,12 @@ module RidepilotCadAvl
         end
       end
 
+      itin_opts = {}
+      itin_opts[:include] = [:address]
+
       render success_response({
         active_run: active_run ? RunSerializer.new(active_run).serializable_hash : nil,
-        active_itin: active_itin ? ItinerarySerializer.new(active_itin).serializable_hash : nil
+        active_itin: active_itin ? ItinerarySerializer.new(active_itin, itin_opts).serializable_hash : nil
         })
     end
   end  
