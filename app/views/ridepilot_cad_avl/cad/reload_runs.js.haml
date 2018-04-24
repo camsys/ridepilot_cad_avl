@@ -1,7 +1,9 @@
+var all_run_ids = getAllRunIds();
 var selected_run_ids = getSelectedRunIds();
 $('.run_checkboxes').replaceWith("#{ j render 'run_checkboxes', runs: @runs }");
 selected_run_ids.forEach(function(run_id){ $('.run_list input[data-run-id=' + run_id +']').prop("checked", true).trigger('change'); });
 
 - if params[:is_refresh] == 'true'
   var run_ids = #{@runs.pluck(:id) || []};
-  removeRuns(run_ids);
+  var to_remove_ids = $(all_run_ids).not(run_ids).get();
+  removeRuns(to_remove_ids);

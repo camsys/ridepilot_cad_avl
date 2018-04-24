@@ -174,9 +174,9 @@ module RidepilotCadAvl
         @itin.save(validate: false)
 
         if eta_diff_seconds && eta_diff_seconds != 0
-          itins = run.sorted_itineraries(true)
+          itins = run.sorted_itineraries
           itin_index = itins.index(@itin)
-          if itin_index >= 0
+          if itin_index
             itins[itin_index+1..-1].each do |itin|
               if itin.eta 
                 itin.eta = itin.eta + (eta_diff_seconds).seconds 

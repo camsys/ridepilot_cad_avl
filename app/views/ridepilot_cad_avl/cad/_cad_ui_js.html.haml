@@ -59,3 +59,15 @@
 
     return pre_run_ids;
   }
+
+
+  function getAllRunIds() {
+    var run_ids = [];
+    $('.run_list input').each(function() {
+      var run_id = $(this).data('run-id');
+
+      run_ids.push(run_id);
+    });
+
+    return run_ids;
+  }

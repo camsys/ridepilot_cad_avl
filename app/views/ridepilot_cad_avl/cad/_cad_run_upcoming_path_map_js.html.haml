@@ -12,7 +12,8 @@
 
     directionsDisplay = new google.maps.DirectionsRenderer({
       map: map,
-      suppressMarkers: true
+      suppressMarkers: true,
+      preserveViewport: true
     });
     upcoming_path_lines[run_id] = directionsDisplay;
 
