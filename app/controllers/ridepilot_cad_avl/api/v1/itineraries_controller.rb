@@ -168,8 +168,8 @@ module RidepilotCadAvl
       if @itin
         run = @itin.run 
         old_eta = @itin.eta.try(:to_datetime)
-        new_eta = DateTime.parse(params[:eta]) unless params[:eta].blank?
-        eta_diff_seconds = ((new_eta - old_eta) * 24 * 60 * 60).to_i if new_eta && old_eta
+        new_eta = Time.parse(params[:eta]) unless params[:eta].blank?
+        eta_diff_seconds = (new_eta - old_eta).to_i if new_eta && old_eta
         @itin.eta = new_eta 
         @itin.save(validate: false)
 
