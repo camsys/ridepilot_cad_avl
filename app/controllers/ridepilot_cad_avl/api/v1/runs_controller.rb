@@ -21,12 +21,6 @@ module RidepilotCadAvl
         @run.actual_start_time = current_time
         @run.save(validate: false)
 
-        @run.from_garage_address ||= @run.build_from_garage_address
-        if params[:longitude] && params[:latitude]
-          @run.from_garage_address.the_geom = Address.compute_geom(params[:latitude], params[:longitude])
-          @run.from_garage_address.save
-        end
-
         unless params[:inspections].blank?
           params[:inspections].each do |insp|
             run_insp = @run.run_vehicle_inspections.where(vehicle_inspection_id: insp[:id]).first_or_create
@@ -52,14 +46,32 @@ module RidepilotCadAvl
         @run.actual_end_time = current_time
         @run.save(validate: false)
 
-        @run.to_garage_address ||= @run.build_to_garage_address
-        if params[:longitude] && params[:latitude]
-          @run.to_garage_address.the_geom = Address.compute_geom(params[:latitude], params[:longitude])
-          @run.to_garage_address.save
-        end
-
         # end leg completed
         @run.itineraries.run_end.update_all(status_code: Itinerary::STATUS_COMPLETED, finish_time: current_time)
+      end
+
+      render success_response({})
+    end
+
+    def update_from_address
+      @run = Run.find_by_id(params[:id])
+      if @run
+        addr = parse_address
+        addr.save
+        @run.from_garage_address = addr
+        @run.save(validate: false)
+      end
+      
+      render success_response({})
+    end
+
+    def update_to_address
+      @run = Run.find_by_id(params[:id])
+      if @run
+        addr = parse_address
+        addr.save
+        @run.to_garage_address = addr
+        @run.save(validate: false)
       end
 
       render success_response({})
@@ -93,6 +105,21 @@ module RidepilotCadAvl
         active_run: active_run ? RunSerializer.new(active_run).serializable_hash : nil,
         active_itin: active_itin ? ItinerarySerializer.new(active_itin, itin_opts).serializable_hash : nil
         })
+    end
+
+    private
+
+    def parse_address
+      address = GarageAddress.new(address_params)
+      if params[:address][:longitude] && params[:address][:latitude]
+        address.the_geom = Address.compute_geom(params[:address][:latitude], params[:address][:longitude])
+      end
+
+      address
+    end
+
+    def address_params
+      params.required(:address).permit(:address, :city, :state, :zip)
     end
   end  
 end
