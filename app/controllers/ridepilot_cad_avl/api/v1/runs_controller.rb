@@ -94,7 +94,10 @@ module RidepilotCadAvl
           .default_order.first
 
         if active_run 
-          active_itin = active_run.sorted_itineraries.find{|r| r.finish_time.nil?}
+          itins = active_run.sorted_itineraries
+          active_itin = itins.find{|r| r.finish_time.nil?}
+          idx = itins.index(active_itin)
+          next_itin = active_itin[idx + 1] if idx 
         end
       end
 
@@ -102,8 +105,10 @@ module RidepilotCadAvl
       itin_opts[:include] = [:address]
 
       render success_response({
+        timezone: Time.zone.name,
         active_run: active_run ? RunSerializer.new(active_run).serializable_hash : nil,
-        active_itin: active_itin ? ItinerarySerializer.new(active_itin, itin_opts).serializable_hash : nil
+        active_itin: active_itin ? ItinerarySerializer.new(active_itin, itin_opts).serializable_hash : nil,
+        next_itin: next_itin ? ItinerarySerializer.new(next_itin, itin_opts).serializable_hash : nil
         })
     end
 

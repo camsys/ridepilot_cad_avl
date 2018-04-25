@@ -4,7 +4,7 @@ class ItinerarySerializer
 
   belongs_to :address
 
-  attribute :id, :trip_id, :leg_flag, :status_code, :departure_time, :arrival_time, :finish_time
+  attribute :id, :trip_id, :leg_flag, :status_code, :departure_time, :arrival_time, :finish_time, :eta, :time
 
   attribute :time_seconds do |object|
     (object.time - object.time.beginning_of_day).to_i if object.time
@@ -12,6 +12,16 @@ class ItinerarySerializer
 
   attribute :eta_seconds do |object|
     (object.eta - object.eta.beginning_of_day).to_i if object.eta
+  end
+
+  attribute :processing_time_seconds do |object|
+    if object.trip
+      object.is_pickup? ? (object.trip.passenger_load_min || 0) * 60 : (object.trip.passenger_unload_min || 0) * 60
+    end
+  end
+
+  attribute :early_pickup_not_allowed do |object|
+    true if object.trip && object.is_pickup? && !object.trip.early_pickup_allowed
   end
 
   attribute :trip_notes do |object|
