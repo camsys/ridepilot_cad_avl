@@ -59,15 +59,18 @@
     var icon;
     switch(type) {
       case 0:
-      case 3:
-        // garage 
+        // start 
         icon = {
-          path: 'M -2,-2 2,-2 2,2 -2,2 z',
-          strokeColor: 'red',
-          fillColor: 'red',
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: 'white',
           fillOpacity: 1,
-          scale: 3
+          strokeWeight: 3,
+          scale: 5
         };
+        break;
+      case 3:
+        // end 
+        icon = null;
         break;
       case 1:
         // pickup
@@ -103,13 +106,7 @@
     switch(type) {
       case 0:
       case 3:
-        // garage 
-        label = {
-          text: "G",
-          fontWeight: "bold",
-          fontSize: '12px',
-          color: 'white'
-        };
+        label = null;
         break;
       case 1:
         // pickup

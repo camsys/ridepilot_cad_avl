@@ -1,7 +1,8 @@
 :ruby
   address = itin.address
   customer = itin.trip.try(:customer)
-  is_garage = [0, 3].include?(itin.leg_flag)
+  is_start = itin.leg_flag == 0
+  is_end = itin.leg_flag == 3
   stop_label = case itin.leg_flag
   when 1
     "Pick Up #{customer.try(:name)}"
@@ -49,9 +50,10 @@
 
 
 .stop_info
-  - if is_garage
+  - if is_start || is_end
     .info_header
-      %p.info_title Garage
+      %p.info_title 
+        = is_start ? "Run Start" : "Run End"
       %p
         %span.info_stop_name= address.one_line_text
   - else
