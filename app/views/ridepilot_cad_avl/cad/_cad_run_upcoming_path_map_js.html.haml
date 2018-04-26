@@ -15,7 +15,6 @@
       suppressMarkers: true,
       preserveViewport: true
     });
-    upcoming_path_lines[run_id] = directionsDisplay;
 
     var origin = new google.maps.LatLng(start_latlng[0], start_latlng[1]);
     var dest = new google.maps.LatLng(end_latlng[0], end_latlng[1]);
@@ -38,7 +37,10 @@
 
     directionsService.route(request, function(result, status) {
       if (status == 'OK') {
+        // remove previous renderer
+        removeUpcomingPath(run_id);
         directionsDisplay.setDirections(result);
+        upcoming_path_lines[run_id] = directionsDisplay;
       }
     });
   }
