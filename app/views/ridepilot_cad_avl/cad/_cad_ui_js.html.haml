@@ -17,7 +17,7 @@
   }
 
    // load run data into map
-  function reloadRun(run_id){
+  function reloadRun(run_id, is_full_loading){
     $.ajax({
       url: "#{reload_run_cad_path}",
       data: {
@@ -28,7 +28,7 @@
         },
         cad: {
           run_id: run_id,
-          last_log_time: (last_log_time ? last_log_time.toISOString() : null)
+          last_log_time: (last_log_time && !is_full_loading ? last_log_time.toISOString() : null)
         }
       }
     });

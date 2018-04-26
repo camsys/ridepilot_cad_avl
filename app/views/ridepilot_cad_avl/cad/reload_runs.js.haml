@@ -7,3 +7,5 @@ selected_run_ids.forEach(function(run_id){ $('.run_list input[data-run-id=' + ru
   var run_ids = #{@runs.pluck(:id) || []};
   var to_remove_ids = $(all_run_ids).not(run_ids).get();
   removeRuns(to_remove_ids);
+- else
+  last_log_time = null;

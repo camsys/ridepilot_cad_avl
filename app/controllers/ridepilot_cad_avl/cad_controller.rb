@@ -27,6 +27,7 @@ module RidepilotCadAvl
     def reload_run
       @run = Run.find_by_id(params[:cad][:run_id])
       if @run 
+        @run_ids = [@run.id]
         # exclude complete run if showing only incomplete ones
         unless params[:cad][:incomplete_runs_only] == 'true' && @run.end_odometer
           @run_in_progress = @run.date == Date.today && @run.start_odometer && !@run.end_odometer
@@ -46,8 +47,8 @@ module RidepilotCadAvl
     end
 
     def load_run_stops
-      run_ids = params[:run_ids].split(',') unless params[:run_ids].blank?
-      prepare_run_stops_data(run_ids)
+      @run_ids = params[:run_ids].split(',') unless params[:run_ids].blank?
+      prepare_run_stops_data(@run_ids)
     end
 
     def load_prior_path
