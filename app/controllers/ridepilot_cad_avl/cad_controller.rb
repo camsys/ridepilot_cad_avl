@@ -107,7 +107,7 @@ module RidepilotCadAvl
     end
 
     def prepare_upcoming_path_data
-      if @run
+      if !@run.end_odometer
         # get start location   
         if @run_in_progress
           @vehicle_location = GpsLocation.where(run_id: @run.id).reorder("log_time DESC").first
