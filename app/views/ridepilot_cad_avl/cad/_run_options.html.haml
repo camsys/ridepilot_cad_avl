@@ -69,13 +69,13 @@
     }
 
     function requestPriorPath() {
-      var run_id = $(this).data('run-id');
-      var last_log_time = (last_log_time ? last_log_time.toISOString() : null);
-      if(!prior_path_lines[run_id]) {
-        last_log_time = null;
-      }
-      
       $('.run_list input:checked').each(function() {
+        var run_id = $(this).data('run-id');
+        var last_log_time = (last_log_time ? last_log_time.toISOString() : null);
+        if(!prior_path_lines[run_id]) {
+          last_log_time = null;
+        }
+      
         $.ajax({
           url: "#{load_prior_path_cad_path}",
           data: {
