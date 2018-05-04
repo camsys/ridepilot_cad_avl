@@ -1,6 +1,12 @@
 :javascript
   // store list of vehicle markers
   var vehicle_markers = {};
+
+  // last displayed vehicle location
+  var last_vehicle_coords = {};
+
+  // vehicle animation line
+  var vehicle_animation_path = {};
   
   // draw vehicle location on map
   function drawVehicle(raw_data, infoWindowOpen) {
@@ -13,14 +19,50 @@
       return;
     }
 
-    // define car marker with svg (so can use rotation)
+    var latestLoc = [loc_data.latitude, loc_data.longitude];
+    var run_id = loc_data.run_id;
+    var loc_id = raw_data.data.id;
+    // draw a static marker at latest location
+    if(!last_vehicle_coords[run_id]) {
+      addVehicleStaticMarker(loc_id, loc_data);
+    } else {
+      if(checkVehicleMoved(run_id, latestLoc)) {
+        removeVehicle(run_id);
+        // animate car from last loc to the latest location
+        animateVehicleAlongPath(run_id, latestLoc);
+      } else {
+        if(!vehicle_markers[run_id]) {
+          addVehicleStaticMarker(loc_id, loc_data);
+        }
+      }
+    }
+
+    // write new coords
+    last_vehicle_coords[run_id] = latestLoc;
+  }
+
+  function getCarSymbol() {
+    var path = "M17.402,0H5.643C2.526,0,0,3.467,0,6.584v34.804c0,3.116,2.526,5.644,5.643,5.644h11.759c3.116,0,5.644-2.527,5.644-5.644 V6.584C23.044,3.467,20.518,0,17.402,0z M22.057,14.188v11.665l-2.729,0.351v-4.806L22.057,14.188z M20.625,10.773 c-1.016,3.9-2.219,8.51-2.219,8.51H4.638l-2.222-8.51C2.417,10.773,11.3,7.755,20.625,10.773z M3.748,21.713v4.492l-2.73-0.349 V14.502L3.748,21.713z M1.018,37.938V27.579l2.73,0.343v8.196L1.018,37.938z M2.575,40.882l2.218-3.336h13.771l2.219,3.336H2.575z M19.328,35.805v-7.872l2.729-0.355v10.048L19.328,35.805z";
+    
     var car = {
-      path: 'M29.395,0H17.636c-3.117,0-5.643,3.467-5.643,6.584v34.804c0,3.116,2.526,5.644,5.643,5.644h11.759 c3.116,0,5.644-2.527,5.644-5.644V6.584C35.037,3.467,32.511,0,29.395,0z M34.05,14.188v11.665l-2.729,0.351v-4.806L34.05,14.188z M32.618,10.773c-1.016,3.9-2.219,8.51-2.219,8.51H16.631l-2.222-8.51C14.41,10.773,23.293,7.755,32.618,10.773z M15.741,21.713 v4.492l-2.73-0.349V14.502L15.741,21.713z M13.011,37.938V27.579l2.73,0.343v8.196L13.011,37.938z M14.568,40.882l2.218-3.336 h13.771l2.219,3.336H14.568z M31.321,35.805v-7.872l2.729-0.355v10.048L31.321,35.805z',
-      fillColor: 'black',
-      fillOpacity: 0.8,
-      scale: 0.4,
-      rotation: loc_data.bearing || 0
+      path: path,
+      scale: .7,
+      strokeColor: 'white',
+      strokeWeight: .10,
+      fillOpacity: 1,
+      fillColor: '#404040',
+      offset: '5%',
+      // rotation: parseInt(heading[i]),
+      anchor: new google.maps.Point(10, 25) // orig 10,50 back of car, 10,0 front of car, 10,25 center of car
     };
+
+    return car;
+  }
+
+  function addVehicleStaticMarker(loc_id, loc_data) {
+    // define car marker with svg (so can use rotation)
+    var car = getCarSymbol();
+    car.rotation = loc_data.bearing || 0;
 
     // define marker 
     var marker = new google.maps.Marker({
@@ -31,8 +73,7 @@
 
     // save reference as need to hide marker
     vehicle_markers[loc_data.run_id] = marker;
-
-    var loc_id = raw_data.data.id;
+    
     marker.addListener('click', function() {
       infoWindow.open(map, marker);
       infoWindow.setContent('loading...');
@@ -44,6 +85,82 @@
     if(infoWindowOpen && infoWindow.type == 'Vehicle' && infoWindow.run_id == loc_data.run_id) {
       // re-load info window
       new google.maps.event.trigger( marker, 'click' );
+    }
+  }
+
+  function checkVehicleMoved(run_id, destCoords) {
+    var originCoords = last_vehicle_coords[run_id];
+    if(!originCoords || originCoords.length != 2 || originCoords.join() == destCoords.join()) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function animateVehicleAlongPath(run_id, destCoords) {
+    if(!destCoords || !checkVehicleMoved(run_id, destCoords)) {
+      return;
+    }
+
+    var originCoords = last_vehicle_coords[run_id];
+
+    var lineSymbol = {
+      path: google.maps.SymbolPath.CIRCLE,
+      fillOpacity: 1,
+      scale: 3
+    };
+
+    var car = getCarSymbol();
+
+    var directionsService = new google.maps.DirectionsService();
+
+    var origin = new google.maps.LatLng(originCoords[0], originCoords[1]);
+    var dest = new google.maps.LatLng(destCoords[0], destCoords[1]);
+
+    var request = {
+      origin: origin,
+      destination: dest,
+      travelMode: 'DRIVING'
+    };
+
+    directionsService.route(request, function(response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        removeVehiclePath(run_id);
+        var vehicle_path = new google.maps.Polyline({
+          path: response.routes[0].overview_path,
+          icons: [{
+            icon: lineSymbol,
+            offset: '0',
+            repeat: '10px'
+          },
+          {
+            icon: car,
+            offset: '100%'
+          }],
+          strokeColor: '#0eb7f6',
+          map: map
+        });
+        vehicle_animation_path[run_id] = vehicle_path;
+
+        moveVehicle(vehicle_path);
+      }
+    });
+  }
+
+  function moveVehicle(line) {
+    var count = 0;
+    window.setInterval(function() {
+      count = (count + 1) % 200;
+      var icons = line.get('icons');
+      icons[1].offset = (count / 2) + '%';
+      line.set('icons', icons);
+    }, 100);
+  }
+
+  // remove vehicle path
+  function removeVehiclePath(run_id) {
+    if(vehicle_animation_path[run_id]) {
+      vehicle_animation_path[run_id].setMap(null);
     }
   }
 
