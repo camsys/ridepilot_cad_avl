@@ -85,7 +85,9 @@ module RidepilotCadAvl
     end
 
     def prepare_run_stops_data(run_ids)
-      @itins_data = Run.where(id: run_ids).joins(itineraries: :address).pluck(
+      @itins_data = Run.where(id: run_ids).joins(itineraries: :address)
+        .where.not(itineraries: {status_code: Itinerary::STATUS_OTHER})
+        .pluck(
         "itineraries.id",
         "ST_Y(addresses.the_geom::geometry) as longitude",
         "ST_X(addresses.the_geom::geometry) as latitude",
