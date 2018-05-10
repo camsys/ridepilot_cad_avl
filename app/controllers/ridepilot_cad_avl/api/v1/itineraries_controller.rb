@@ -11,7 +11,9 @@ module RidepilotCadAvl
       end
       opts = {}
       opts[:include] = [:address]
-      render success_response(@run.try(:sorted_itineraries) || [], opts)
+      #itin_ids = @run.public_itineraries.pluck(:itinerary_id)
+      itins = Itinerary.unscoped.joins(:public_itinerary).where(public_itineraries: {run_id: @run.id}).order("public_itineraries.sequence")
+      render success_response(itins, opts)
     end
 
     # Gets one itinerary

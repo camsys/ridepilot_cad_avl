@@ -92,12 +92,13 @@ module RidepilotCadAvl
           .where.not(start_odometer: nil)
           .where(end_odometer: nil)
           .default_order.first
-
+        
         if active_run 
-          itins = active_run.sorted_itineraries
-          active_itin = itins.find{|r| r.finish_time.nil?}
-          idx = itins.index(active_itin)
-          next_itin = active_itin[idx + 1] if idx 
+          public_itins = active_run.public_itineraries
+          active_public_itin = public_itins.non_finished.first
+          active_itin = active_public_itin.try(:itinerary)
+          idx = public_itins.index(active_public_itin)
+          next_itin = public_itins[idx + 1].try(:itinerary) if idx 
         end
       end
 

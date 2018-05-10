@@ -119,20 +119,22 @@ module RidepilotCadAvl
           end
         end
 
-        itins = @run.sorted_itineraries
+        itins = @run.public_itineraries
         
         # get destination location
-        last_itin = itins.last
+        last_public_itin = itins.last
+        last_itin = last_public_itin.itinerary
         @end_latlng = get_itin_address_latlng(last_itin)
         if !@end_latlng && itins.length > 2
-          second_last_itin = itins[itins.length - 2]
-          @end_latlng = get_itin_address_latlng(second_last_itin)
+          second_last_public_itin = itins[itins.length - 2]
+          @end_latlng = get_itin_address_latlng(second_last_public_itin.itinerary)
         end
 
         # get waypoints
         @waypoint_latlngs = []
         current_itin_found = false
-        itins.each_with_index do |itin, idx|
+        itins.each_with_index do |public_itin, idx|
+          itin = public_itin.itinerary
           if !@start_latlng 
             @start_latlng = get_itin_address_latlng(itin)
           end

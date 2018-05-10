@@ -6,12 +6,26 @@ class ItinerarySerializer
 
   attribute :id, :trip_id, :leg_flag, :status_code, :departure_time, :arrival_time, :finish_time, :eta, :time
 
+  attribute :eta do |object|
+    if object.public_itinerary
+      object.public_itinerary.eta
+    else
+      eta
+    end
+  end
+
   attribute :time_seconds do |object|
     (object.time - object.time.beginning_of_day).to_i if object.time
   end
 
   attribute :eta_seconds do |object|
-    (object.eta - object.eta.beginning_of_day).to_i if object.eta
+    if object.public_itinerary
+      eta = object.public_itinerary.eta
+    else
+      eta = object.eta 
+    end
+
+    (eta - eta.beginning_of_day).to_i if eta
   end
 
   attribute :processing_time_seconds do |object|
