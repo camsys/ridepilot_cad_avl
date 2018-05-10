@@ -109,7 +109,8 @@ module RidepilotCadAvl
         timezone: Time.zone.name,
         active_run: active_run ? RunSerializer.new(active_run).serializable_hash : nil,
         active_itin: active_itin ? ItinerarySerializer.new(active_itin, itin_opts).serializable_hash : nil,
-        next_itin: next_itin ? ItinerarySerializer.new(next_itin, itin_opts).serializable_hash : nil
+        next_itin: next_itin ? ItinerarySerializer.new(next_itin, itin_opts).serializable_hash : nil,
+        timezone_offset: (DateTime.current.utc_offset / 3600)
         })
     end
 
