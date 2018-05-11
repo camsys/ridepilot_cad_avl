@@ -1,3 +1,6 @@
+:ruby
+  has_run = @runs.any?
+
 :css
   .run_checkboxes .run_list {
     font-weight: normal;
@@ -15,10 +18,15 @@
   Select Runs to Show:
   %input#all_toggle{type: 'checkbox', 'data-toggle': 'toggle', 'data-on': 'All Runs', 'data-off': 'Incomplete Only', 'data-size': 'small', 'data-width': '125', checked: 'true'}
 .col-sm-12  
-  %label.select_all
+  %label.select_all{style: (has_run ? "" : "display: none;")}
     %input{type: 'checkbox'} 
       Select All
-  %hr{style: 'margin: 0px;'}
+  %label#no_run_warning{style: (!has_run ? "" : "display: none;")}
+    - unless params[:cad][:incomplete_runs_only] == 'true'
+      = "There are no runs for this day."
+    - else
+      = "There are no remaining incomplete runs for this day."
+  
   = render 'run_checkboxes', runs: @runs
 
 :javascript

@@ -71,3 +71,18 @@
 
     return run_ids;
   }
+
+  function showNoRunWarning() {
+    $('.select_all').hide();
+    if($('#all_toggle').is(":checked")) {
+      $('#no_run_warning').text('There are no runs for this day.');
+    } else {
+      $('#no_run_warning').text('There are no remaining incomplete runs for this day.');
+    }
+    $('#no_run_warning').show();
+  }
+
+  function hideNoRunWarning() {
+    $('#no_run_warning').hide();
+    $('.select_all').show();
+  }
