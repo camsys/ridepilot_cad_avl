@@ -1,0 +1,6 @@
+- unless @itins_data.blank?
+  var bounds = new google.maps.LatLngBounds();
+  var itins_data = #{@itins_data.to_json.html_safe};
+  itins_data.forEach(function(itin) { var latlng = new google.maps.LatLng(itin[1], itin[2]); bounds.extend(latlng); });
+  map.fitBounds(bounds);
+  map.setCenter(bounds.getCenter()); 

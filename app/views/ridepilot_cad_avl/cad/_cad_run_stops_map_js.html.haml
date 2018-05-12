@@ -160,6 +160,15 @@
     });
   }
 
+  function zoomToRun(run_id) {
+    $.ajax({
+      url: "#{zoom_to_run_cad_path}",
+      data: {
+        run_id: run_id
+      }
+    });
+  }
+
   function hoverStop(lat, lng, leg_flag) {
     if(!lat || !lng) {
       return;
@@ -170,7 +179,6 @@
     stopHoverMarker = new google.maps.Marker({
       map: map,
       icon: getIcon(leg_flag),
-      label: getMarkerLabel(leg_flag),
       animation: google.maps.Animation.BOUNCE,
       position: {lat: lat, lng: lng}
     });

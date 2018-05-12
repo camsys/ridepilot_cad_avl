@@ -110,7 +110,7 @@
     }
 
     var run_checkbox = $('input[type=checkbox][data-run-id=' + run_id + ']');
-    run_checkbox.parents('.run_list').find('.collapse_run').replaceWith('<i class="fa fa-chevron-circle-down expand_run" title="Show stops"></i>');
+    run_checkbox.parents('.run_list').find('.collapse_run').replaceWith('<i class="fa fa-chevron-circle-down run_action expand_run" title="Show stops"></i>');
     $('.run_stops').remove();
 
     expanded_run_id = null;
@@ -129,7 +129,13 @@
     collapseRun(run_id);
   });
 
-  $(document).on('mouseenter', '.run_stop', function(e) {
+  $(document).on('click', '.zoom_to_run', function(e) {
+    e.preventDefault();
+    var run_id = $(this).parents('.run_list').find('input[type=checkbox]').data('run-id');
+    zoomToRun(run_id);
+  });
+
+  $(document).on('mouseover', '.run_stop', function(e) {
     e.preventDefault();
     var lat = $(this).data('latitude');
     var lng = $(this).data('longitude');
@@ -139,7 +145,7 @@
     }
   });
 
-  $(document).on('mouseleave', '.run_stop', function(e) {
+  $(document).on('mouseout', '.run_stop', function(e) {
     e.preventDefault();
     exitHoverStop();
   });

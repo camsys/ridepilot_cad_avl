@@ -12,6 +12,7 @@ RidepilotCadAvl::Engine.routes.draw do
       get 'past_location_info'
       get 'stop_info'
       get 'expand_run'
+      get 'zoom_to_run'
     end
   end
 

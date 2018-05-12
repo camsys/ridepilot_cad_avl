@@ -2,6 +2,7 @@
   if run.start_odometer && !run.end_odometer
     has_active_itin = true
   end
+  
 %ul.run_stops
   - stop_counter = 0
   - run.public_itineraries.each do |public_itin|

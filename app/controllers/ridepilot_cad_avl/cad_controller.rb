@@ -6,7 +6,8 @@ module RidepilotCadAvl
 
     def index
       @provider = current_provider
-      @runs = Run.for_provider(current_provider_id).for_date(@cad_day).reorder("lower(name)")
+      
+      get_runs
 
       @is_today = @cad_day == Date.today
       @is_today_or_past = @cad_day <= Date.today
@@ -14,7 +15,7 @@ module RidepilotCadAvl
     end
 
     def reload_runs
-      @runs = Run.for_provider(current_provider_id).for_date(@cad_day).reorder("lower(name)")
+      get_runs
       
       @incomplete_only = params[:cad] && params[:cad][:incomplete_runs_only] == 'true'
       if @incomplete_only
@@ -78,7 +79,15 @@ module RidepilotCadAvl
       @itin = Itinerary.find_by_id(params[:itinerary_id])
     end
 
+    def zoom_to_run
+      prepare_run_stops_data(params[:run_id])
+    end
+
     private
+
+    def get_runs
+      @runs = Run.for_provider(current_provider_id).for_date(@cad_day).reorder("lower(name)").joins(:public_itineraries).group('runs.id')
+    end
 
     def get_date
       @cad_day = if params[:cad] && !params[:cad][:date].blank?

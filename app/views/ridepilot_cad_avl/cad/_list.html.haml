@@ -18,9 +18,9 @@
   Select Runs to Show:
   %input#all_toggle{type: 'checkbox', 'data-toggle': 'toggle', 'data-on': 'All Runs', 'data-off': 'Incomplete Only', 'data-size': 'small', 'data-width': '125', checked: 'true'}
 .col-sm-12  
-  %label.select_all{style: (has_run ? "" : "display: none;")}
+  %span.select_all{style: (has_run ? "" : "display: none;")}
     %input{type: 'checkbox'} 
-      Select All
+      %b Select All
   %label#no_run_warning{style: (!has_run ? "" : "display: none;")}
     - unless params[:cad] && params[:cad][:incomplete_runs_only] == 'true'
       = "There are no runs for this day."
