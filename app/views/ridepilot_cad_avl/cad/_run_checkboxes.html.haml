@@ -3,10 +3,14 @@
     %span.run_list
       %input{type: 'checkbox', data: {run_id: run.id}}
         = run.name
-        
-      - if expanded_run_id && expanded_run_id.to_i == run.id
+
+      - run_expanded = expanded_run_id && expanded_run_id.to_i == run.id
+      - if run_expanded
         %i.fa.fa-chevron-circle-up.run_action.collapse_run{title: 'Hide stops'}
-        = render 'run_stop_list', run: run
+        
       - else
         %i.fa.fa-chevron-circle-down.run_action.expand_run{title: 'Show stops'}
       %i.fa.fa-plus-circle.run_action.zoom_to_run{title: "Zoom to"}
+
+      - if run_expanded
+        = render 'run_stop_list', run: run
