@@ -170,6 +170,7 @@
     stopHoverMarker = new google.maps.Marker({
       map: map,
       icon: getIcon(leg_flag),
+      label: getMarkerLabel(leg_flag),
       animation: google.maps.Animation.BOUNCE,
       position: {lat: lat, lng: lng}
     });
