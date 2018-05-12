@@ -13,7 +13,13 @@
     directionsDisplay = new google.maps.DirectionsRenderer({
       map: map,
       suppressMarkers: true,
-      preserveViewport: true
+      preserveViewport: true,
+      polylineOptions: {
+        color: "red",
+        strokeColor: "blue",
+        strokeWeight: 3,
+        strokeOpacity: 0.6
+      }
     });
 
     var origin = new google.maps.LatLng(start_latlng[0], start_latlng[1]);

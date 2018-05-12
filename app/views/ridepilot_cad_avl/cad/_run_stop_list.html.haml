@@ -1,0 +1,16 @@
+:ruby
+  if run.start_odometer && !run.end_odometer
+    has_active_itin = true
+  end
+%ul.run_stops
+  - stop_counter = 0
+  - run.public_itineraries.each do |public_itin|
+    - itin = public_itin.itinerary
+    - if itin
+      - stop_label = itin.label
+      - if itin.is_pickup? || itin.is_dropoff?
+        - stop_counter += 1
+        - stop_label = "#{stop_counter}. #{itin.label}"
+      - is_active = has_active_itin && !itin.finish_time    
+      %li{data: {itinerary_id: itin.id,  leg_flag: itin.leg_flag, latitude: itin.address.try(:latitude), longitude: itin.address.try(:longitude)}, class: (is_active ? "active_run_stop" : "run_stop")}
+        = stop_label

@@ -1,0 +1,8 @@
+- if @run
+  var run_id = #{@run.id};
+  var run_checkbox = $('input[type=checkbox][data-run-id=' + run_id + ']');
+  var run_container = run_checkbox.parents('.run_list');
+
+  run_container.append("#{ j render 'run_stop_list', run: @run }");
+  expanded_run_id = run_id;
+  run_container.find('.expand_run').replaceWith('<i class="fa fa-chevron-circle-up collapse_run" title="Hide stops"></i>');

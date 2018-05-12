@@ -11,6 +11,7 @@ RidepilotCadAvl::Engine.routes.draw do
       get 'vehicle_info'
       get 'past_location_info'
       get 'stop_info'
+      get 'expand_run'
     end
   end
 

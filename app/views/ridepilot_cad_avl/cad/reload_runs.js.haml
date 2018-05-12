@@ -1,6 +1,6 @@
 var all_run_ids = getAllRunIds();
 var selected_run_ids = getSelectedRunIds();
-$('.run_checkboxes').replaceWith("#{ j render 'run_checkboxes', runs: @runs }");
+$('.run_checkboxes').replaceWith("#{ j render 'run_checkboxes', runs: @runs, expanded_run_id: params[:cad][:expanded_run_id] }");
 selected_run_ids.forEach(function(run_id){ $('.run_list input[data-run-id=' + run_id +']').prop("checked", true); reloadRun(run_id); });
 
 - if @runs.empty?

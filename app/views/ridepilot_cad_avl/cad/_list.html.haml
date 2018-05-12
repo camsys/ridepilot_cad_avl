@@ -22,12 +22,12 @@
     %input{type: 'checkbox'} 
       Select All
   %label#no_run_warning{style: (!has_run ? "" : "display: none;")}
-    - unless params[:cad][:incomplete_runs_only] == 'true'
+    - unless params[:cad] && params[:cad][:incomplete_runs_only] == 'true'
       = "There are no runs for this day."
     - else
       = "There are no remaining incomplete runs for this day."
   
-  = render 'run_checkboxes', runs: @runs
+  = render 'run_checkboxes', runs: @runs, expanded_run_id: nil
 
 :javascript
   $(function() {

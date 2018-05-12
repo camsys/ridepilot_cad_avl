@@ -1,4 +1,6 @@
 :javascript
+  var expanded_run_id;
+
   // re-render run checkbox listing
   function reloadRuns(incomplete_runs_only, is_refresh){
 
@@ -6,7 +8,8 @@
       is_refresh: is_refresh,
       cad: {
         date: "#{@cad_day}",
-        incomplete_runs_only: incomplete_runs_only
+        incomplete_runs_only: incomplete_runs_only,
+        expanded_run_id: expanded_run_id
       }
     };
 
@@ -86,3 +89,71 @@
     $('#no_run_warning').hide();
     $('.select_all').show();
   }
+
+  function expandRun(run_id) {
+    collapseRun(expanded_run_id);
+
+    $.ajax({
+      url: "#{expand_run_cad_path}",
+      data: {
+        cad: {
+          run_id: run_id
+        }
+      }
+    });
+
+  }
+
+  function collapseRun(run_id) {
+    if(!run_id) {
+      return;
+    }
+
+    var run_checkbox = $('input[type=checkbox][data-run-id=' + run_id + ']');
+    run_checkbox.parents('.run_list').find('.collapse_run').replaceWith('<i class="fa fa-chevron-circle-down expand_run" title="Show stops"></i>');
+    $('.run_stops').remove();
+
+    expanded_run_id = null;
+  }
+
+  $(document).on('click', '.expand_run', function(e) {
+    e.preventDefault();
+    var run_id = $(this).parents('.run_list').find('input[type=checkbox]').data('run-id');
+    expandRun(run_id);
+
+  });
+
+  $(document).on('click', '.collapse_run', function(e) {
+    e.preventDefault();
+    var run_id = $(this).parents('.run_list').find('input[type=checkbox]').data('run-id');
+    collapseRun(run_id);
+  });
+
+  $(document).on('mouseenter', '.run_stop', function(e) {
+    e.preventDefault();
+    var lat = $(this).data('latitude');
+    var lng = $(this).data('longitude');
+    if(lat && lng) {
+      var leg_flag = $(this).data('leg-flag');
+      hoverStop(parseFloat(lat), parseFloat(lng), leg_flag);
+    }
+  });
+
+  $(document).on('mouseleave', '.run_stop', function(e) {
+    e.preventDefault();
+    exitHoverStop();
+  });
+
+  $(document).on('click', '.run_stop', function(e) {
+    e.preventDefault();
+
+    infoWindow.open(map, stopHoverMarker);
+    infoWindow.setContent('loading...');
+
+    var itin_id = $(this).data('itinerary-id');
+    if(itin_id) {
+      requestStopInfo(itin_id);
+    }
+
+    return false;
+  });

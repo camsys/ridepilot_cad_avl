@@ -3,3 +3,9 @@
     %label.run_list
       %input{type: 'checkbox', data: {run_id: run.id}}
         = run.name
+        
+      - if expanded_run_id && expanded_run_id.to_i == run.id
+        %i.fa.fa-chevron-circle-up.collapse_run{title: 'Hide stops'}
+        = render 'run_stop_list', run: run
+      - else
+        %i.fa.fa-chevron-circle-down.expand_run{title: 'Show stops'}

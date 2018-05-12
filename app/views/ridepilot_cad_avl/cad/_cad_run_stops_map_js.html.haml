@@ -4,6 +4,9 @@
 
   // cluster marker
   var stopMarkerCluster;
+
+  // stop marker when mouse hovers on stop name in run stop list
+  var stopHoverMarker;
   
   // draw run stop location on map
   function drawRunStop(itin_data) {
@@ -155,4 +158,26 @@
         itinerary_id: itin_id
       }
     });
+  }
+
+  function hoverStop(lat, lng, leg_flag) {
+    if(!lat || !lng) {
+      return;
+    } 
+
+    exitHoverStop();
+
+    stopHoverMarker = new google.maps.Marker({
+      map: map,
+      icon: getIcon(leg_flag),
+      animation: google.maps.Animation.BOUNCE,
+      position: {lat: lat, lng: lng}
+    });
+    
+  }
+
+  function exitHoverStop() {
+    if(stopHoverMarker) {
+      stopHoverMarker.setMap(null);
+    }
   }

@@ -46,6 +46,10 @@ module RidepilotCadAvl
       respond_to :js
     end
 
+    def expand_run
+      @run = Run.find_by_id(params[:cad][:run_id])
+    end
+
     def load_run_stops
       @run_ids = params[:run_ids].split(',') unless params[:run_ids].blank?
       prepare_run_stops_data(@run_ids)
@@ -85,13 +89,19 @@ module RidepilotCadAvl
     end
 
     def prepare_run_stops_data(run_ids)
-      @itins_data = Run.where(id: run_ids).joins(itineraries: :address)
-        .where.not(itineraries: {status_code: Itinerary::STATUS_OTHER})
+      query_stops = Run.where(id: run_ids).joins("
+          inner join public_itineraries on public_itineraries.run_id = runs.id 
+          inner join itineraries on public_itineraries.itinerary_id = itineraries.id 
+          inner join addresses on itineraries.address_id = addresses.id
+          ")
+        .where("itineraries.status_code is NULL or itineraries.status_code != ?", Itinerary::STATUS_OTHER)
+
+      @itins_data = query_stops
         .pluck(
         "itineraries.id",
         "ST_Y(addresses.the_geom::geometry) as longitude",
         "ST_X(addresses.the_geom::geometry) as latitude",
-        :run_id, 
+        "itineraries.run_id", 
         :leg_flag, 
         :status_code
         )
@@ -120,28 +130,30 @@ module RidepilotCadAvl
         end
 
         itins = @run.public_itineraries
-        
-        # get destination location
-        last_public_itin = itins.last
-        last_itin = last_public_itin.itinerary
-        @end_latlng = get_itin_address_latlng(last_itin)
-        if !@end_latlng && itins.length > 2
-          second_last_public_itin = itins[itins.length - 2]
-          @end_latlng = get_itin_address_latlng(second_last_public_itin.itinerary)
-        end
 
-        # get waypoints
-        @waypoint_latlngs = []
-        current_itin_found = false
-        itins.each_with_index do |public_itin, idx|
-          itin = public_itin.itinerary
-          if !@start_latlng 
-            @start_latlng = get_itin_address_latlng(itin)
+        if itins.any?
+          # get destination location
+          last_public_itin = itins.last
+          last_itin = last_public_itin.itinerary
+          @end_latlng = get_itin_address_latlng(last_itin)
+          if !@end_latlng && itins.length > 2
+            second_last_public_itin = itins[itins.length - 2]
+            @end_latlng = get_itin_address_latlng(second_last_public_itin.itinerary)
           end
-          current_itin_found = true if current_itin_id == itin.id
-          if !current_itin_id || current_itin_found
-            latlng = get_itin_address_latlng(itin)
-            @waypoint_latlngs << latlng if latlng
+
+          # get waypoints
+          @waypoint_latlngs = []
+          current_itin_found = false
+          itins.each_with_index do |public_itin, idx|
+            itin = public_itin.itinerary
+            if !@start_latlng 
+              @start_latlng = get_itin_address_latlng(itin)
+            end
+            current_itin_found = true if current_itin_id == itin.id
+            if !current_itin_id || current_itin_found
+              latlng = get_itin_address_latlng(itin)
+              @waypoint_latlngs << latlng if latlng
+            end
           end
         end
       end

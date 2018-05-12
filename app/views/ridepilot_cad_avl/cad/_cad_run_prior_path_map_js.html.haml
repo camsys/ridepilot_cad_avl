@@ -43,8 +43,9 @@
     if(!run_path) {
       run_path = new google.maps.Polyline({
         path: snappedCoordinates,
-        strokeColor: 'black',
-        strokeWeight: 3
+        strokeColor: 'gray',
+        strokeWeight: 3,
+        strokeOpacity: 0.6
       });
       run_path.setMap(map);
 
