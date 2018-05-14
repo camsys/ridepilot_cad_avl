@@ -4,7 +4,7 @@ module RidepilotCadAvl
     #Gets list of runs
     # GET /
     def index
-      @runs = Run.where(date: Date.today, driver: @driver).default_order
+      @runs = Run.where(date: Date.today, driver: @driver).default_order.joins(:public_itineraries).group('runs.id')
       opts = {}
       opts[:include] = [:vehicle]
       render success_response(@runs, opts)
