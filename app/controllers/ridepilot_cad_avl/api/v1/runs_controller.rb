@@ -4,10 +4,17 @@ module RidepilotCadAvl
     #Gets list of runs
     # GET /
     def index
-      @runs = Run.where(date: Date.today, driver: @driver).default_order.joins(:public_itineraries).group('runs.id')
+      get_runs
       opts = {}
       opts[:include] = [:vehicle]
       render success_response(@runs, opts)
+    end
+
+    def show
+      @run = Run.find_by_id(params[:id])
+      opts = {}
+      opts[:include] = [:vehicle]
+      render success_response(@run, opts)
     end
 
     # Start run
@@ -88,8 +95,8 @@ module RidepilotCadAvl
     # find active run and active itin
     def driver_run_data
       if @driver 
-        active_run = Run.where(date: Date.today, driver: @driver)
-          .where.not(start_odometer: nil)
+        get_runs
+        active_run = @runs.where.not(start_odometer: nil)
           .where(end_odometer: nil)
           .default_order.first
         
@@ -107,6 +114,8 @@ module RidepilotCadAvl
 
       render success_response({
         timezone: Time.zone.name,
+        gps_interval_seconds: ApplicationSetting['cad_avl.gps_interval_seconds'] || 10,
+        manifest_change_check_interval_seconds: ApplicationSetting['cad_avl.manifest_change_check_interval_seconds'] || 5,
         active_run: active_run ? RunSerializer.new(active_run).serializable_hash : nil,
         active_itin: active_itin ? ItinerarySerializer.new(active_itin, itin_opts).serializable_hash : nil,
         next_itin: next_itin ? ItinerarySerializer.new(next_itin, itin_opts).serializable_hash : nil,
@@ -114,7 +123,18 @@ module RidepilotCadAvl
         })
     end
 
+    def manifest_published_at
+      @run = Run.find_by_id(params[:id])
+      render success_response({
+        manifest_published_at: @run.try(:manifest_published_at)
+        })
+    end
+
     private
+
+    def get_runs
+      @runs = Run.where(date: Date.today, driver: @driver).default_order.joins(:public_itineraries).group('runs.id')
+    end
 
     def parse_address
       address = GarageAddress.new(address_params)

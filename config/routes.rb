@@ -24,13 +24,14 @@ RidepilotCadAvl::Engine.routes.draw do
       
       get   'runs'            => 'runs#index'
       get   'driver_run_data' => 'runs#driver_run_data'
-      resources :runs, only: [:index] do
+      resources :runs, only: [:index, :show] do
         member do
           put 'start' 
           put 'end' 
           put 'update_from_address' 
           put 'update_to_address' 
           get 'inspections'
+          get 'manifest_published_at'
         end 
       end
 
