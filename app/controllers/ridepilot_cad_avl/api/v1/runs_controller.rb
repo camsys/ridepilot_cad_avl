@@ -65,8 +65,7 @@ module RidepilotCadAvl
       if @run
         addr = parse_address
         addr.save
-        @run.from_garage_address = addr
-        @run.save(validate: false)
+        @run.update_column(:from_garage_address_id, addr.id)
       end
       
       render success_response({})
@@ -77,8 +76,7 @@ module RidepilotCadAvl
       if @run
         addr = parse_address
         addr.save
-        @run.to_garage_address = addr
-        @run.save(validate: false)
+        @run.update_column(:to_garage_address_id, addr.id)
       end
 
       render success_response({})

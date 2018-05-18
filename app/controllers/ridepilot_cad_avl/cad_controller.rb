@@ -76,7 +76,7 @@ module RidepilotCadAvl
     end
 
     def stop_info
-      @itin = Itinerary.find_by_id(params[:itinerary_id])
+      @public_itin = PublicItinerary.find_by_itinerary_id(params[:itinerary_id])
     end
 
     def zoom_to_run

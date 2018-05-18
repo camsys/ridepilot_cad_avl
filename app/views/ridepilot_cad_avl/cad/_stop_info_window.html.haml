@@ -1,4 +1,5 @@
 :ruby
+  itin = public_itin.itinerary
   address = itin.address
   customer = itin.trip.try(:customer)
   run = itin.run
@@ -78,6 +79,6 @@
               %label.label.label-danger No Show
           - else
             %b ETA: 
-            = itin.eta ? format_time_for_listing(itin.eta) : 'N/A'
+            = public_itin.eta ? format_time_for_listing(public_itin.eta) : 'N/A'
       
 
