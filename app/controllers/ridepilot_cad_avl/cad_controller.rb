@@ -98,21 +98,24 @@ module RidepilotCadAvl
     end
 
     def prepare_run_stops_data(run_ids)
+      exclude_leg_ids = Itinerary.where(run_id: run_ids).dropoff.joins(trip: :trip_result)
+        .where(trip_results: {code: TripResult::NON_DISPATCHABLE_CODES}).pluck(:id).uniq
+
       query_stops = Run.where(id: run_ids).joins("
           inner join public_itineraries on public_itineraries.run_id = runs.id 
           inner join itineraries on public_itineraries.itinerary_id = itineraries.id 
           inner join addresses on itineraries.address_id = addresses.id
           ")
-        .where("itineraries.status_code is NULL or itineraries.status_code != ?", Itinerary::STATUS_OTHER)
+        .where.not(itineraries: {id: exclude_leg_ids})
 
       @itins_data = query_stops
         .pluck(
-        "itineraries.id",
-        "ST_Y(addresses.the_geom::geometry) as longitude",
-        "ST_X(addresses.the_geom::geometry) as latitude",
-        "itineraries.run_id", 
-        :leg_flag, 
-        :status_code
+          "itineraries.id",
+          "ST_Y(addresses.the_geom::geometry) as longitude",
+          "ST_X(addresses.the_geom::geometry) as latitude",
+          "itineraries.run_id", 
+          :leg_flag, 
+          :status_code
         )
     end
 
