@@ -1,4 +1,4 @@
-- if @itin
+- if @public_itin
   infoWindow.type = "Stop";
-  infoWindow.itin_id = #{@itin.id};
-  infoWindow.setContent("#{ j render 'stop_info_window', itin: @itin }");
+  infoWindow.itin_id = #{@public_itin.itinerary_id};
+  infoWindow.setContent("#{ j render 'stop_info_window', public_itin: @public_itin }");
