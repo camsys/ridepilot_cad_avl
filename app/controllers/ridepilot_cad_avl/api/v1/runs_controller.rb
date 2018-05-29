@@ -111,6 +111,7 @@ module RidepilotCadAvl
       itin_opts[:include] = [:address]
 
       render success_response({
+        provider_id: @driver.try(:provider_id),
         timezone: Time.zone.name,
         gps_interval_seconds: ApplicationSetting['cad_avl.gps_interval_seconds'] || 10,
         manifest_change_check_interval_seconds: ApplicationSetting['cad_avl.manifest_change_check_interval_seconds'] || 5,
