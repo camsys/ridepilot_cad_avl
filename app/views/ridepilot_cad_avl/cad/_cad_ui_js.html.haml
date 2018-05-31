@@ -116,6 +116,10 @@
     expanded_run_id = null;
   }
 
+  function openDriverChat(run_id) {
+    window.open("#{driver_chat_path}?run_id=" + run_id, '_blank');
+  }
+
   $(document).on('click', '.expand_run', function(e) {
     e.preventDefault();
     var run_id = $(this).parents('.run_list').find('input[type=checkbox]').data('run-id');
@@ -133,6 +137,12 @@
     e.preventDefault();
     var run_id = $(this).parents('.run_list').find('input[type=checkbox]').data('run-id');
     zoomToRun(run_id);
+  });
+
+  $(document).on('click', '.driver_chat', function(e) {
+    e.preventDefault();
+    var run_id = $(this).parents('.run_list').find('input[type=checkbox]').data('run-id');
+    openDriverChat(run_id);
   });
 
   $(document).on('mouseover', '.run_stop', function(e) {

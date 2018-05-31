@@ -16,11 +16,14 @@ RidepilotCadAvl::Engine.routes.draw do
     end
   end
 
+  get "driver_chat" => "chat#show"
+
   # APIs for RideAVL
   namespace :api, defaults: { format: :json } do
     namespace :v1 do 
       post  'driver_sign_in'  => 'driver_sessions#create'
       post  'send_emergency_alert'  => 'messages#create_emergency_alert'
+      post  'send_message'  => 'messages#create_routine_message'
 
       
       get   'runs'            => 'runs#index'

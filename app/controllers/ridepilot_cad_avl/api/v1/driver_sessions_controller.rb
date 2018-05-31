@@ -19,7 +19,7 @@ module RidepilotCadAvl
       if @errors.empty?
         render(success_response(
             message: "Driver Signed In Successfully", 
-            session: session_hash(@user)
+            session: session_hash
           )) and return
       else # If there are any errors, send back a failure response.
         render(fail_response(errors: @errors, status: @fail_status))
@@ -30,12 +30,13 @@ module RidepilotCadAvl
     private
 
     # Returns the signed in user's username and authentication token
-  def session_hash(user)
+  def session_hash
     {
-      id: user.id,
-      name: user.name,
-      username: user.username,
-      authentication_token: user.authentication_token
+      driver_id: @driver.id,
+      provider_id: @driver.provider_id,
+      name: @user.name,
+      username: @user.username,
+      authentication_token: @user.authentication_token
     }
   end
 

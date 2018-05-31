@@ -1,0 +1,12 @@
+:ruby
+  is_own_message = message.sender == current_user
+.media{class: is_own_message ? "pull-right" : ""}
+  - if is_own_message
+    .media-left
+      = message.sender.display_name
+  .media-body
+    %b.media-heading
+      = time_ago_in_words(message.created_at)
+  - unless is_own_message
+    .media-right
+      = message.sender.display_name
