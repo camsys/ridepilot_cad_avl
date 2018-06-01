@@ -60,6 +60,12 @@ class ItinerarySerializer
     end
   end
 
+  attribute :mobility_notes do |object|
+    if object.trip && object.is_pickup?
+      object.trip.mobility_notes
+    end
+  end
+
   attribute :customer_name do |object|
     object.trip.customer.name if object.trip
   end
