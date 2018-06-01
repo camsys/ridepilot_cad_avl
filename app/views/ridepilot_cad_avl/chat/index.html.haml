@@ -1,0 +1,74 @@
+:css
+  .chat {
+      list-style: none !important;
+      margin: 0;
+      padding: 0;
+  }
+
+  .panel .slidedown .glyphicon, .chat .glyphicon
+  {
+      margin-right: 5px;
+  }
+
+  .panel-body
+  {
+      overflow-y: scroll;
+      height: 400px;
+  }
+
+  .chat li
+  {
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px dotted #B3A9A9;
+  }
+
+
+  .chat li .chat-body p
+  {
+      margin: 0;
+      color: #777777;
+  }
+
+.panel.panel-primary
+  .panel-heading
+    %span.glyphicon.glyphicon-comment
+    = "Chat with driver #{@run.driver.user.display_name} (Run: #{@run.name})"
+  .panel-body
+    %ul.chat
+      - @messages.each do |message|
+        = render 'details', message: message
+  .panel-footer{style: 'padding-bottom: 40px;'}
+    = form_for :chat, :method=>:post, url: chat_path, remote: true do |form|
+      = hidden_field_tag 'driver_id', @driver.id
+      %textarea.form-control{name: 'message', placeholder: "Type your message here...", required: true}
+      %span.pull-right{style: 'padding-top: 5px;'}
+        %button#btn-chat.btn.btn-warning.btn-sm{type: 'submit'}
+          Send
+
+:javascript
+  $(function() {
+    $(".panel-body").animate({ scrollTop: $(this).height() }, "slow");
+
+    var provider_id = #{current_provider_id};
+    var driver_id = #{@run.driver_id};
+    
+    function new_message_callback(message_id) {
+      console.log('test');
+      $.ajax({
+        url: "#{chat_path(id: 'xxx')}".replace('xxx', message_id)
+      });
+    }
+    create_chat_channel(provider_id, driver_id, new_message_callback);
+
+    function sendMessage(message) {
+      $.ajax({
+        url: "#{chat_path}",
+        method: 'post',
+        data: {
+          driver_id: driver_id,
+          message: message
+        }
+      });
+    }
+  });
