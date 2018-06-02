@@ -3,25 +3,27 @@
 
 - if is_own_message
   %li.right.clearfix
-    %span.pull-right
     .chat-body.clearfix
       .header.pull-right
-        %strong.primary-font
-          = message.sender.try(:display_name)
-        %small.text-muted
-          %span.glyphicon.glyphicon-time
-          = "#{time_ago_in_words(message.created_at)} ago"
-        %p
-          = message.body
+        .row.pull-right{style: 'padding: 0px 10px;'}
+          %small.text-muted
+            %span.glyphicon.glyphicon-time
+            = "#{time_ago_in_words(message.created_at)} ago"
+          %strong.primary-font
+            = message.sender.try(:display_name)
+        .row{style: 'padding: 0px 10px;'}
+          %p.pull-right
+            = message.body
 - else 
   %li.left.clearfix
-    %span.pull-left
     .chat-body.clearfix
       .header
-        %strong.primary-font 
-          = message.sender.try(:display_name)
-        %small.text-muted
-          %span.glyphicon.glyphicon-time
-          = "#{time_ago_in_words(message.created_at)} ago"
-        %p
-          = message.body
+        .row{style: 'padding: 0px 10px;'}
+          %strong.primary-font 
+            = message.sender.try(:display_name)
+          %small.text-muted
+            %span.glyphicon.glyphicon-time
+            = "#{time_ago_in_words(message.created_at)} ago"
+        .row{style: 'padding: 0px 10px;'}  
+          %p
+            = message.body

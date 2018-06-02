@@ -43,18 +43,20 @@
       = hidden_field_tag 'driver_id', @driver.id
       %textarea.form-control{name: 'message', placeholder: "Type your message here...", required: true}
       %span.pull-right{style: 'padding-top: 5px;'}
+        = collection_select(:message_template, :id, DispatcherMessageTemplate.by_provider(current_provider), :id, :message, { include_blank: "Quick response..."}, {id: 'message_template', class: 'form-control', style: 'max-width: 200px; display: inline-block;'} )
         %button#btn-chat.btn.btn-warning.btn-sm{type: 'submit'}
           Send
 
 :javascript
   $(function() {
-    $(".panel-body").animate({ scrollTop: $(this).height() }, "slow");
+    setTimeout( function() {
+      $(".panel-body").animate({ scrollTop: $(this).height() }, "slow");
+    }, 250);
 
     var provider_id = #{current_provider_id};
     var driver_id = #{@run.driver_id};
     
     function new_message_callback(message_id) {
-      console.log('test');
       $.ajax({
         url: "#{chat_path(id: 'xxx')}".replace('xxx', message_id)
       });
@@ -71,4 +73,22 @@
         }
       });
     }
+
+    function resizePage() {
+      // set height as: window size - (page header + footer)
+      $('.panel-body').height($(window).height() - 200);  
+    }
+
+    $(window).resize(function() {
+      clearTimeout(window.resizedFinished);
+      window.resizedFinished = setTimeout(function(){
+        resizePage();
+      }, 250);
+    });
+
+    $('#message_template').change(function() {
+      if($(this).val()) {
+        $('textarea[name=message]').val($(this).find("option:selected").text());
+      }
+    });
   });
