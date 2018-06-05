@@ -24,8 +24,15 @@ RidepilotCadAvl::Engine.routes.draw do
   namespace :api, defaults: { format: :json } do
     namespace :v1 do 
       post  'driver_sign_in'  => 'driver_sessions#create'
-      post  'send_emergency_alert'  => 'messages#create_emergency_alert'
-      post  'send_message'  => 'messages#create_routine_message'
+
+      resources :messages, only: [] do
+        collection do 
+          get :driver_message_templates
+          get :chats
+          post :send_message
+          post :send_emergency_alert
+        end
+      end
 
       
       get   'runs'            => 'runs#index'

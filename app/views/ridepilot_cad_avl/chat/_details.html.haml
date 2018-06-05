@@ -1,14 +1,15 @@
 :ruby
   is_own_message = message.sender_id == current_user.id
+  created_at = message.created_at.to_s(:iso8601)
 
 - if is_own_message
   %li.right.clearfix
-    .chat-body.clearfix
+    .chat-body.clearfix{data: {id: message.id}}
       .header.pull-right
         .row.pull-right{style: 'padding: 0px 10px;'}
           %small.text-muted
             %span.glyphicon.glyphicon-time
-            = "#{time_ago_in_words(message.created_at)} ago"
+            %time.timeago{datetime: created_at}
           %strong.primary-font
             = message.sender.try(:display_name)
         .row{style: 'padding: 0px 10px;'}
@@ -16,14 +17,17 @@
             = message.body
 - else 
   %li.left.clearfix
-    .chat-body.clearfix
+    .chat-body.clearfix{data: {id: message.id}}
       .header
         .row{style: 'padding: 0px 10px;'}
           %strong.primary-font 
             = message.sender.try(:display_name)
           %small.text-muted
             %span.glyphicon.glyphicon-time
-            = "#{time_ago_in_words(message.created_at)} ago"
+            %time.timeago{datetime: created_at}
         .row{style: 'padding: 0px 10px;'}  
           %p
             = message.body
+
+:javascript
+  $(".chat-body[data-id='" + "#{message.id}" + "'] time.timeago").timeago();

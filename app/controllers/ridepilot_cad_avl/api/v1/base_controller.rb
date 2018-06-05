@@ -33,7 +33,7 @@ module RidepilotCadAvl
       status = 200 # Status code is 200 by default
 
       json_response = {}
-
+      
       # Check if an ActiveRecord object or collection was passed, and if so, serialize it
       if data.is_a?(ActiveRecord::Relation) 
         json_response = package_collection(data, opts)
