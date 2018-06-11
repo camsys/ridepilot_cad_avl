@@ -30,6 +30,12 @@
       color: #777777;
   }
 
+  .quick_response_list {
+    max-width: 200px !important;
+    width: auto !important;
+    display: inline-block !important;
+  }
+
 .panel.panel-primary
   .panel-heading
     %span.glyphicon.glyphicon-comment
@@ -43,7 +49,7 @@
       = hidden_field_tag 'driver_id', @driver.id
       %textarea.form-control{name: 'message', placeholder: "Type your message here...", required: true}
       %span.pull-right{style: 'padding-top: 5px;'}
-        = collection_select(:message_template, :id, DispatcherMessageTemplate.by_provider(current_provider), :id, :message, { include_blank: "Quick response..."}, {id: 'message_template', class: 'form-control', style: 'max-width: 200px; display: inline-block;'} )
+        = collection_select(:message_template, :id, DispatcherMessageTemplate.by_provider(current_provider), :id, :message, { include_blank: "Quick response..."}, {id: 'message_template', class: 'form-control quick_response_list'} )
         %button#btn-chat.btn.btn-warning.btn-sm{type: 'submit'}
           Send
 
