@@ -97,4 +97,11 @@
         $('textarea[name=message]').val($(this).find("option:selected").text());
       }
     });
+
+    $('textarea[name=message]').keypress(function (e) {
+      if (e.which == 13) {
+        $('form').submit();
+        return false;
+      }
+    });
   });
