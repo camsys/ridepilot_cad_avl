@@ -117,7 +117,7 @@
   }
 
   function openDriverChat(run_id) {
-    window.open("#{driver_chat_path(run_id: 'xxx')}".replace('xxx', run_id), '_blank', "width=800, height=600");
+    window.open("#{driver_chat_path(run_id: 'xxx')}".replace('xxx', run_id), 'chat_' + run_id, "width=800, height=600");
   }
 
   $(document).on('click', '.expand_run', function(e) {
