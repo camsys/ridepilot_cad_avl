@@ -95,6 +95,8 @@
     $('#message_template').change(function() {
       if($(this).val()) {
         $('textarea[name=message]').val($(this).find("option:selected").text());
+        $(this).val('');
+        $('form').submit();
       }
     });
 
