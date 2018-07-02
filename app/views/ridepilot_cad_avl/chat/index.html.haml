@@ -36,6 +36,7 @@
     display: inline-block !important;
   }
 
+- last_read_msg_id = ChatReadReceipt.for_today.where(read_by_id: current_user.try(:id), run_id: @run.id).reorder(created_at: :desc).first.try(:message_id)
 .panel.panel-primary
   .panel-heading
     %span.glyphicon.glyphicon-comment
@@ -46,6 +47,7 @@
         = render 'details', message: message
   .panel-footer{style: 'padding-bottom: 40px;'}
     = form_for :chat, :method=>:post, url: chat_path, remote: true do |form|
+      = hidden_field_tag 'run_id', @run.id
       = hidden_field_tag 'driver_id', @driver.id
       %textarea.form-control{name: 'message', placeholder: "Type your message here...", required: true}
       %span.pull-right{style: 'padding-top: 5px;'}
@@ -60,7 +62,10 @@
     }, 250);
 
     var provider_id = #{current_provider_id};
+    var run_id = #{@run.id};
     var driver_id = #{@run.driver_id};
+    var user_id = #{current_user.id};
+    var last_read_msg_id = #{last_read_msg_id || -1};
     
     function new_message_callback(message_id) {
       $.ajax({
@@ -68,17 +73,6 @@
       });
     }
     create_chat_channel(provider_id, driver_id, new_message_callback);
-
-    function sendMessage(message) {
-      $.ajax({
-        url: "#{chat_path}",
-        method: 'post',
-        data: {
-          driver_id: driver_id,
-          message: message
-        }
-      });
-    }
 
     function resizePage() {
       // set height as: window size - (page header + footer)
@@ -105,5 +99,34 @@
         $('form').submit();
         return false;
       }
+    });
+
+    function mark_message_read(message_id) {
+      console.log('reading ' + message_id);
+      if(!message_id) {
+        return;
+      }
+
+      if(!last_read_msg_id || message_id != last_read_msg_id) {
+        $.ajax({
+          url: "#{read_chat_path}",
+          method: 'post',
+          data: {
+            run_id: run_id,
+            read_by_id: user_id,
+            message_id: message_id
+          },
+          success: function() {
+            last_read_msg_id = message_id;
+          }
+        });
+      }
+    }
+
+    // page get focus to flag message read receipt
+    $(window).focus(function() {
+      console.log('focus');
+      var last_message_id = $('.chat-body.from_other:last').data('id');
+      mark_message_read(last_message_id);
     });
   });

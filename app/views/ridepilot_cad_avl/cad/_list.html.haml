@@ -14,6 +14,10 @@
   .toggle {
     float: right;
   }
+
+  .driver_chat.new_message {
+    color: red;
+  }
 %h3
   Select Runs to Show:
   %input#all_toggle{type: 'checkbox', 'data-toggle': 'toggle', 'data-on': 'All Runs', 'data-off': 'Incomplete Only', 'data-size': 'small', 'data-width': '125', checked: 'true'}
@@ -31,6 +35,24 @@
 
 :javascript
   $(function() {
+    var run_ids = #{@runs.pluck(:id)};
+    run_ids.forEach(function(run_id) {
+      var callback = function(data) {
+        var run_span = $('.run_list[data-run-id= ' + run_id + ']');
+        if(data.dismiss && #{current_user.id} == data.read_by_id) {
+          // Dismiss alert
+          if(data.message_id && run_span.attr('data-last-message-id') == data.message_id.toString()) {
+            run_span.find('.driver_chat').removeClass('new_message');
+          }
+        } else if(data.sender_id && data.sender_id != #{current_user.id}) {
+          run_span.attr('data-last-message-id', data.message_id);
+          run_span.find('.driver_chat').addClass('new_message');
+        }
+      };
+
+      create_chat_alert_channel(run_id, callback);
+    });
+
     $(document).on('change', '.select_all input', function() {
       if ($(this).is(':checked')) {
         $('.run_list input').prop('checked', true).trigger('change');

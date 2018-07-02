@@ -18,6 +18,9 @@ RidepilotCadAvl::Engine.routes.draw do
 
   get "driver_chat" => "chat#index"
   resource :chat, controller: :chat, only: [:create, :show] do
+    collection do 
+      post 'read'
+    end
   end
 
   # APIs for RideAVL
