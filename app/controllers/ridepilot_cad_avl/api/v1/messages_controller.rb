@@ -27,7 +27,15 @@ module RidepilotCadAvl
 
     def send_message
       if @driver
-        RoutineMessage.create(provider_id: @driver.provider_id, driver: @driver, sender: @driver.user, body: params[:body])
+        RoutineMessage.create(provider_id: @driver.provider_id, driver: @driver, sender: @driver.user, run_id: params[:run_id], body: params[:body])
+      end
+
+      render success_response({success: true})
+    end
+
+    def read_message
+      if @driver 
+        ChatReadReceipt.create(run_id: params[:run_id], message_id: params[:message_id], read_by_id: params[:read_by_id])
       end
 
       render success_response({success: true})

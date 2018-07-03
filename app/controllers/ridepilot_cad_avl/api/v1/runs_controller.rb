@@ -104,6 +104,11 @@ module RidepilotCadAvl
           active_itin = active_public_itin.try(:itinerary)
           idx = public_itins.index(active_public_itin)
           next_itin = public_itins[idx + 1].try(:itinerary) if idx 
+
+          last_read_message_id = ChatReadReceipt.for_today.where(read_by_id: current_user.try(:id), run_id: active_run.id).reorder(created_at: :desc).first.try(:message_id)
+          last_message_id = RoutineMessage.for_today.where.not(sender_id: current_user.try(:id)).where(run_id: active_run.id).reorder(created_at: :desc).first.try(:id)
+
+          has_unread_chat = last_read_message_id != last_message_id
         end
       end
 
@@ -112,6 +117,7 @@ module RidepilotCadAvl
 
       render success_response({
         provider_id: @driver.try(:provider_id),
+        has_unread_chat: has_unread_chat,
         timezone: Time.zone.name,
         gps_interval_seconds: ApplicationSetting['cad_avl.gps_interval_seconds'] || 10,
         manifest_change_check_interval_seconds: ApplicationSetting['cad_avl.manifest_change_check_interval_seconds'] || 5,

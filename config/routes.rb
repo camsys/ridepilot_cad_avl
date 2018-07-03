@@ -34,6 +34,7 @@ RidepilotCadAvl::Engine.routes.draw do
           get :chats
           post :send_message
           post :send_emergency_alert
+          post :read_message
         end
       end
 
