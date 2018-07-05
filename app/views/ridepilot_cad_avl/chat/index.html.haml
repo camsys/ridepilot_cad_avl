@@ -66,10 +66,16 @@
     var driver_id = #{@run.driver_id};
     var user_id = #{current_user.id};
     var last_read_msg_id = #{last_read_msg_id || -1};
+    var is_focused = true;
     
     function new_message_callback(message_id) {
       $.ajax({
-        url: "#{chat_path(id: 'xxx')}".replace('xxx', message_id)
+        url: "#{chat_path(id: 'xxx')}".replace('xxx', message_id),
+        success: function() {
+          if(is_focused) {
+            read_last_message();
+          }
+        }
       });
     }
     create_chat_channel(provider_id, driver_id, new_message_callback);
@@ -133,7 +139,11 @@
 
     // page get focus to flag message read receipt
     $(window, document).focus(function() {
-      console.log('chat window gets focus');
+      is_focused = true;
       read_last_message();
+    });
+
+    $(window, document).focusout(function(){
+      is_focused = false;
     });
   });
