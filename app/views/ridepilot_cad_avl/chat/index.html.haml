@@ -123,10 +123,17 @@
       }
     }
 
+    function read_last_message() {
+      var last_message_id = $('.chat-body.from_other:last').data('id');
+      mark_message_read(last_message_id);
+    }
+
+    // when chat window loads, mark as read
+    read_last_message();
+
     // page get focus to flag message read receipt
     $(window, document).focus(function() {
       console.log('chat window gets focus');
-      var last_message_id = $('.chat-body.from_other:last').data('id');
-      mark_message_read(last_message_id);
+      read_last_message();
     });
   });
