@@ -1,13 +1,17 @@
 :ruby
-  read_messages = ChatReadReceipt.for_today.where(read_by_id: current_user.try(:id)).reorder(created_at: :desc)
-  today_messages = RoutineMessage.for_today.where.not(sender_id: current_user.try(:id)).where(provider_id: current_provider_id).reorder(created_at: :desc)
+  is_today_run = runs.first.try(:date) == Date.today
+  if is_today_run
+    read_messages = ChatReadReceipt.for_today.where(read_by_id: current_user.try(:id)).reorder(created_at: :desc)
+    today_messages = RoutineMessage.for_today.where.not(sender_id: current_user.try(:id)).where(provider_id: current_provider_id).reorder(created_at: :desc)
+  end
 
 .run_checkboxes
   - runs.each do |run|
-    - is_active = run.start_odometer && !run.end_odometer
-    - read_message_id = read_messages.where(run_id: run.id).first.try(:message_id)
-    - last_message_id = today_messages.where(run_id: run.id).first.try(:id)
-    - has_new_message = last_message_id && last_message_id != read_message_id
+    - if is_today_run
+      - is_active = run.start_odometer && !run.end_odometer
+      - read_message_id = read_messages.where(run_id: run.id).first.try(:message_id)
+      - last_message_id = today_messages.where(run_id: run.id).first.try(:id)
+      - has_new_message = last_message_id && last_message_id != read_message_id
     %span.run_list{data: {run_id: run.id, read_message_id: read_message_id, last_message_id: last_message_id}, class: (is_active ? "is_active" : "")}
       %input{type: 'checkbox', data: {run_id: run.id, driver_id: run.driver_id}}
         - if is_active
@@ -22,7 +26,8 @@
       - else
         %i.fa.fa-chevron-circle-down.run_action.expand_run{title: 'Show stops'}
       %i.fa.fa-plus-circle.run_action.zoom_to_run{title: "Zoom to"}
-      %i.fa.fa-comments.run_action.driver_chat{class: (has_new_message ? "new_message" : ""), title: "Chat with driver #{run.driver.try(:user_name)}"}
+      - if is_today_run
+        %i.fa.fa-comments.run_action.driver_chat{class: (has_new_message ? "new_message" : ""), title: "Chat with driver #{run.driver.try(:user_name)}"}
 
       - if run_expanded
         = render 'run_stop_list', run: run

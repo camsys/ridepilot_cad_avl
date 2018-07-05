@@ -33,26 +33,31 @@
   
   = render 'run_checkboxes', runs: @runs, expanded_run_id: nil
 
-:javascript
-  $(function() {
-    var run_ids = #{@runs.pluck(:id)};
-    run_ids.forEach(function(run_id) {
-      var callback = function(data) {
-        var run_span = $('.run_list[data-run-id= ' + run_id + ']');
-        if(data.dismiss && #{current_user.id} == data.read_by_id) {
-          // Dismiss alert
-          if(data.message_id && run_span.attr('data-last-message-id') == data.message_id.toString()) {
-            run_span.find('.driver_chat').removeClass('new_message');
+- if @runs.first.try(:date) == Date.today
+  :javascript
+    $(function() {
+      var run_ids = #{@runs.pluck(:id)};
+      run_ids.forEach(function(run_id) {
+        var callback = function(data) {
+          console.log(data);
+          var run_span = $('.run_list[data-run-id= ' + run_id + ']');
+          if(data.dismiss && #{current_user.id} == data.read_by_id) {
+            // Dismiss alert
+            if(data.message_id && run_span.attr('data-last-message-id') == data.message_id.toString()) {
+              run_span.find('.driver_chat').removeClass('new_message');
+            }
+          } else if(data.sender_id && data.sender_id != #{current_user.id}) {
+            run_span.attr('data-last-message-id', data.message_id);
+            run_span.find('.driver_chat').addClass('new_message');
           }
-        } else if(data.sender_id && data.sender_id != #{current_user.id}) {
-          run_span.attr('data-last-message-id', data.message_id);
-          run_span.find('.driver_chat').addClass('new_message');
-        }
-      };
+        };
 
-      create_chat_alert_channel(run_id, callback);
+        create_chat_alert_channel(run_id, callback);
+      });
     });
 
+:javascript
+  $(function() {
     $(document).on('change', '.select_all input', function() {
       if ($(this).is(':checked')) {
         $('.run_list input').prop('checked', true).trigger('change');
