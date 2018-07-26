@@ -6,22 +6,44 @@
   
   // draw run prior_path location on map
   function drawPriorPath(run_id, path_data) {
-    console.log(path_data);
     if(!path_data || path_data.length == 0) {
       return;
     }
 
+    path_data = multiDimensionalUnique(path_data);
+
     renderLoadedPriorPath(run_id);
 
     // snap roads
-    $.get('https://roads.googleapis.com/v1/snapToRoads', {
-      interpolate: true,
-      key: "#{ENV['GOOGLE_ROAD_API_KEY']}",
-      path: path_data.join('|')
-    }, function(data) {
-      var snappedCoordinates = processSnapToRoadResponse(data);
-      drawSnappedPolyline(run_id, snappedCoordinates);
-    });
+    var maxLimit = #{ENV['GOOGLE_ROAD_POINT_LIMIT'] || 100};
+    var pathDataChunks = []; // split path data into chunks (each contains up to {maxLimit} points)
+    for (var i=0,j=path_data.length; i<j; i+=maxLimit) {
+        pathDataChunks.push(path_data.slice(i,i+maxLimit));
+    }
+
+    // request snapToRoads
+    for(var i=0, j=pathDataChunks.length; i<j; i++) {
+      $.get('https://roads.googleapis.com/v1/snapToRoads', {
+        interpolate: true,
+        key: "#{ENV['GOOGLE_ROAD_API_KEY']}",
+        path: pathDataChunks[i].join('|')
+      }, function(data) {
+        var snappedCoordinates = processSnapToRoadResponse(data);
+        drawSnappedPolyline(run_id, snappedCoordinates);
+      });
+    }
+  }
+
+  function multiDimensionalUnique(arr) {
+    var uniques = [];
+    var itemsFound = {};
+    for(var i = 0, l = arr.length; i < l; i++) {
+        var stringified = JSON.stringify(arr[i]);
+        if(itemsFound[stringified]) { continue; }
+        uniques.push(arr[i]);
+        itemsFound[stringified] = true;
+    }
+    return uniques;
   }
 
   // Store snapped polyline returned by the snap-to-road service.
