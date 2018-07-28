@@ -121,7 +121,7 @@ module RidepilotCadAvl
 
     def prepare_prior_path_data
       if @run
-        new_locations = GpsLocation.where(run_id: @run.id)
+        new_locations = GpsLocation.where(run_id: @run.id).order(:log_time)
         unless params[:cad][:last_log_time].blank?
           last_log_time = DateTime.parse params[:cad][:last_log_time]
           new_locations = new_locations.where("log_time > ?", last_log_time)
