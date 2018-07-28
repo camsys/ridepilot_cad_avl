@@ -120,7 +120,6 @@ module RidepilotCadAvl
         has_unread_chat: has_unread_chat,
         timezone: Time.zone.name,
         gps_interval_seconds: ApplicationSetting['cad_avl.gps_interval_seconds'] || 10,
-        manifest_change_check_interval_seconds: ApplicationSetting['cad_avl.manifest_change_check_interval_seconds'] || 5,
         active_run: active_run ? RunSerializer.new(active_run).serializable_hash : nil,
         active_itin: active_itin ? ItinerarySerializer.new(active_itin, itin_opts).serializable_hash : nil,
         next_itin: next_itin ? ItinerarySerializer.new(next_itin, itin_opts).serializable_hash : nil,
