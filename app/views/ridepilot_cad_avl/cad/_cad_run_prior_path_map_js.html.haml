@@ -26,10 +26,14 @@
     for(var i=0, j=pathDataChunks.length; i<j; i++) {
       var chunkIdx = i;
       snappedChunks[chunkIdx] = null;
+      getSnappedRoads(chunkIdx);
+    }
+
+    function getSnappedRoads(chunkIdx) {
       $.get('https://roads.googleapis.com/v1/snapToRoads', {
         interpolate: true,
         key: "#{ENV['GOOGLE_ROAD_API_KEY']}",
-        path: pathDataChunks[i].join('|')
+        path: pathDataChunks[chunkIdx].join('|')
       }, function(data) {
         snappedChunks[chunkIdx] = processSnapToRoadResponse(data);
         var hasNull = snappedChunks.findIndex(function(r) { return r == null; }) >= 0;
