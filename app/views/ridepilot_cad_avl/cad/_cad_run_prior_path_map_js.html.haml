@@ -28,15 +28,25 @@
     }
 
     function getSnappedRoads(chunkIdx) {
+      var rawPoints = pathDataChunks[chunkIdx];
       $.get('https://roads.googleapis.com/v1/snapToRoads', {
         interpolate: true,
         key: "#{ENV['GOOGLE_ROAD_API_KEY']}",
-        path: pathDataChunks[chunkIdx].join('|')
+        path: rawPoints.join('|')
       }, function(data) {
         snappedChunks[chunkIdx] = processSnapToRoadResponse(data);
       }).fail(function(err) {
         console.log(err);
-        snappedChunks[chunkIdx] = [];
+        // if failed to get snap2roads response, then format raw points into latlng
+        var latlngs = [];
+        for (var idx = 0; idx < rawPoints.length; idx++) {
+          var latlng = new google.maps.LatLng(
+              rawPoints[idx][0],
+              rawPoints[idx][1]);
+          latlngs.push(latlng);
+        }
+        
+        snappedChunks[chunkIdx] = latlngs;
       }).always(function() {
         checkIfDataReady();
       });
