@@ -1,8 +1,6 @@
 :javascript
   // store list of prior_path markers
   var prior_path_lines = {};
-
-  var snappedCoordinates = [];
   
   // draw run prior_path location on map
   function drawPriorPath(run_id, path_data) {
@@ -18,7 +16,7 @@
     var maxLimit = #{ENV['GOOGLE_ROAD_POINT_LIMIT'] || 100};
     var pathDataChunks = []; // split path data into chunks (each contains up to {maxLimit} points)
     for (var i=0,j=path_data.length; i<j; i+=maxLimit) {
-        pathDataChunks.push(path_data.slice(i,i+maxLimit));
+      pathDataChunks.push(path_data.slice(i,i+maxLimit));
     }
 
     // request snapToRoads
@@ -36,13 +34,21 @@
         path: pathDataChunks[chunkIdx].join('|')
       }, function(data) {
         snappedChunks[chunkIdx] = processSnapToRoadResponse(data);
-        var hasNull = snappedChunks.findIndex(function(r) { return r == null; }) >= 0;
-        if(!hasNull) {
-          for(var ii=0; ii<j; ii++) {
-            drawSnappedPolyline(run_id, snappedChunks[ii]);
-          }
-        }
+        checkIfDataReady();
+      }, function(err) {
+        console.log(err);
+        snappedChunks[chunkIdx] = [];
+        checkIfDataReady();
       });
+    }
+
+    function checkIfDataReady() {
+      var hasNull = snappedChunks.findIndex(function(r) { return r == null; }) >= 0;
+      if(!hasNull) {
+        for(var ii=0; ii<j; ii++) {
+          drawSnappedPolyline(run_id, snappedChunks[ii]);
+        }
+      }
     }
   }
 
@@ -102,5 +108,6 @@
   function removePriorPath(run_id) {
     if(prior_path_lines[run_id]) {
       prior_path_lines[run_id].setMap(null);
+      delete prior_path_lines[run_id];
     }
   }
