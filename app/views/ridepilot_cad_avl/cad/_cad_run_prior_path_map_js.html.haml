@@ -34,10 +34,10 @@
         path: pathDataChunks[chunkIdx].join('|')
       }, function(data) {
         snappedChunks[chunkIdx] = processSnapToRoadResponse(data);
-        checkIfDataReady();
-      }, function(err) {
+      }).fail(function(err) {
         console.log(err);
         snappedChunks[chunkIdx] = [];
+      }).always(function() {
         checkIfDataReady();
       });
     }
