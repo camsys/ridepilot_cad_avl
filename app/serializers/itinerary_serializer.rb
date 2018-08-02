@@ -66,6 +66,12 @@ class ItinerarySerializer
     end
   end
 
+  attribute :funding_source do |object|
+    if object.trip 
+      object.trip.funding_source.try(:name)
+    end
+  end
+
   attribute :customer_name do |object|
     object.trip.customer.name if object.trip
   end
