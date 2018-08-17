@@ -5,12 +5,33 @@
   var directionsService = new google.maps.DirectionsService();
   
   // draw run upcoming_path location on map
-  function drawUpcomingPath(run_id, start_latlng, end_latlng, waypoints_latlngs) {
+  function drawUpcomingPath(run_id, waypoints) {
+    // remove previous renderer
+    removeUpcomingPath(run_id);
+
+    // split into multiple requests to overcome google maps directions service limit
+    var maxLimit = #{ENV['GOOGLE_DIRECTIONS_WAYPOINT_LIMIT'] || 25};
+    var chunks = []; 
+    for (var i=0,j=waypoints.length; i<j; i+=maxLimit) {
+      chunks.push(waypoints.slice((i == 0 ? 0 : i-1),i+maxLimit));
+    }
+
+    chunks.forEach(function(chunk) {
+      var ptCount = chunk.length;
+      if(ptCount < 2) {
+        return;
+      }
+
+      requestDirections(run_id, chunk[0], chunk[ptCount - 1], chunk.slice(1,ptCount - 2));
+    });
+  }
+
+  function requestDirections(run_id, start_latlng, end_latlng, waypoints_latlngs) {
     if(!start_latlng || !end_latlng) {
       return;
     }
-
-    directionsDisplay = new google.maps.DirectionsRenderer({
+    
+    var directionsDisplay = new google.maps.DirectionsRenderer({
       map: map,
       suppressMarkers: true,
       preserveViewport: true,
@@ -43,17 +64,19 @@
 
     directionsService.route(request, function(result, status) {
       if (status == 'OK') {
-        // remove previous renderer
-        removeUpcomingPath(run_id);
         directionsDisplay.setDirections(result);
-        upcoming_path_lines[run_id] = directionsDisplay;
+        if(!upcoming_path_lines[run_id]) {
+          upcoming_path_lines[run_id] = [];
+        }
+        upcoming_path_lines[run_id].push(directionsDisplay);
       }
     });
   }
 
-
   function removeUpcomingPath(run_id) {
     if(upcoming_path_lines[run_id]) {
-      upcoming_path_lines[run_id].setMap(null);
+      upcoming_path_lines[run_id].forEach(r => r.setMap(null));
     }
+
+    upcoming_path_lines[run_id] = [];
   }

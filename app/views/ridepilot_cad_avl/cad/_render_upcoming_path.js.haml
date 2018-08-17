@@ -1,6 +1,8 @@
 - if @run && @start_latlng && @end_latlng
-  var start_latlng = #{@start_latlng.to_json.try(:html_safe) || []};
-  var end_latlng = #{@end_latlng.to_json.try(:html_safe) || []};
+  //var start_latlng = #{@start_latlng.to_json.try(:html_safe) || []};
+  //var end_latlng = #{@end_latlng.to_json.try(:html_safe) || []};
   var waypoints = #{@waypoint_latlngs.to_json.try(:html_safe) || []};
-  drawUpcomingPath(#{@run.id}, start_latlng, end_latlng, waypoints);
+  //waypoints.splice(0,0, start_latlng);
+  //waypoints.push(end_latlng);
+  drawUpcomingPath(#{@run.id}, waypoints);
 
