@@ -43,7 +43,7 @@ class ItinerarySerializer
   end
 
   attribute :customer_notes do |object|
-    object.trip.customer.try(:private_notes) if object.trip
+    object.trip.customer.try(:public_notes) if object.trip
   end
 
   attribute :trip_result do |object|
