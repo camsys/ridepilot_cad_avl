@@ -103,7 +103,7 @@ class ItinerarySerializer
   attribute :return_trip_time do |object|
     trip = object.trip 
     if trip && trip.is_outbound? 
-      trip.return_trip.try(:departure_time)
+      trip.return_trip.try(:pickup_time)
     end
   end
 end
