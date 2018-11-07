@@ -115,15 +115,19 @@ module RidepilotCadAvl
       itin_opts = {}
       itin_opts[:include] = [:address]
 
+      provider = @driver.provider
       render success_response({
-        provider_id: @driver.try(:provider_id),
+        provider_id: provider.try(:id),
         has_unread_chat: has_unread_chat,
         timezone: Time.zone.name,
         gps_interval_seconds: ApplicationSetting['cad_avl.gps_interval_seconds'] || 10,
         active_run: active_run ? RunSerializer.new(active_run).serializable_hash : nil,
         active_itin: active_itin ? ItinerarySerializer.new(active_itin, itin_opts).serializable_hash : nil,
         next_itin: next_itin ? ItinerarySerializer.new(next_itin, itin_opts).serializable_hash : nil,
-        timezone_offset: (DateTime.current.utc_offset / 3600)
+        timezone_offset: (DateTime.current.utc_offset / 3600),
+        map_center_lat: (provider && provider.viewport_center ? provider.viewport_center.y : GOOGLE_MAP_DEFAULTS[:viewport][:center_lat]),
+        map_center_lng: (provider && provider.viewport_center ? provider.viewport_center.x : GOOGLE_MAP_DEFAULTS[:viewport][:center_lng]),
+        map_zoom: (provider && provider.viewport_zoom || GOOGLE_MAP_DEFAULTS[:viewport][:zoom] || 10)
         })
     end
 
