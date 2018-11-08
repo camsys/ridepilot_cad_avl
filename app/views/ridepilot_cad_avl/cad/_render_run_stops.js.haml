@@ -3,4 +3,13 @@
   run_ids.forEach(function(run_id) { removeRunStops(run_id); });
   
   var itins_data = #{@itins_data.to_json.html_safe};
-  itins_data.forEach(function(itin_data) { drawRunStop(itin_data); });
+  var idx = 0;
+  itins_data.forEach(function(itin_data) { 
+  var seq_number = null;
+  var itin_type = itin_data[4];
+  if(itin_type == 1 || itin_type == 2) {
+  idx ++;
+  seq_number = idx;
+  }
+  drawRunStop(itin_data, seq_number); 
+  });

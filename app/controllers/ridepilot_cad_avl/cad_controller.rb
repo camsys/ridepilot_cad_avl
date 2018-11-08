@@ -105,7 +105,7 @@ module RidepilotCadAvl
           inner join public_itineraries on public_itineraries.run_id = runs.id 
           inner join itineraries on public_itineraries.itinerary_id = itineraries.id 
           inner join addresses on itineraries.address_id = addresses.id
-          ")
+          ").order("public_itineraries.sequence")
         .where.not(itineraries: {id: exclude_leg_ids})
 
       @itins_data = query_stops

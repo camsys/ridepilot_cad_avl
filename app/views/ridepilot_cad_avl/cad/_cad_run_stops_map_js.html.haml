@@ -9,7 +9,7 @@
   var stopHoverMarker;
   
   // draw run stop location on map
-  function drawRunStop(itin_data) {
+  function drawRunStop(itin_data, seq_number) {
     if(!itin_data || itin_data.length == 0) {
       return;
     }
@@ -26,10 +26,19 @@
     }
 
     // define marker 
+    var markerLabel = null;
+    if(seq_number != null) {
+      markerLabel = {
+        text: seq_number.toString(),
+        fontWeight: "bold",
+        fontSize: '12px',
+        color: 'white'
+      };
+    }
     var marker = new google.maps.Marker({
       position: {lat: lat, lng: lng},
-      icon: getIcon(leg_flag),
-      label: getMarkerLabel(leg_flag)
+      icon: getIcon(leg_flag, 0.5),
+      label: markerLabel
     });
 
     if(stopMarkerCluster) {
@@ -48,8 +57,14 @@
       infoWindow.open(map, marker);
       infoWindow.setContent('loading...');
 
+      marker.setIcon(getIcon(leg_flag, 1));
+
+      function restoreIcon() {
+        marker.setIcon(getIcon(leg_flag, 0.5)); 
+      }
+
       //ajax request content
-      requestStopInfo(itin_id);
+      requestStopInfo(itin_id, restoreIcon);
     });
 
     if(infoWindow.getMap() && infoWindow.type == 'Stop' && infoWindow.itin_id == itin_id) {
@@ -58,7 +73,7 @@
     }
   }
 
-  function getIcon(type) {
+  function getIcon(type, opacity) {
     var icon;
     switch(type) {
       case 0:
@@ -66,7 +81,7 @@
         icon = {
           path: google.maps.SymbolPath.CIRCLE,
           fillColor: 'white',
-          fillOpacity: 1,
+          fillOpacity: opacity,
           strokeWeight: 3,
           scale: 5
         };
@@ -81,7 +96,7 @@
           path: 'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
           strokeColor: 'blue',
           fillColor: 'blue',
-          fillOpacity: 1,
+          fillOpacity: opacity,
           scale: 0.5,
           labelOrigin: new google.maps.Point(0, -25)
         }
@@ -92,7 +107,7 @@
           path: 'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
           strokeColor: 'black',
           fillColor: 'black',
-          fillOpacity: 1,
+          fillOpacity: opacity,
           scale: 0.5,
           labelOrigin: new google.maps.Point(0, -25)
         }
@@ -104,6 +119,8 @@
     return icon;
   }
 
+  // deprecated
+  // now display pickup/dropoff sequence number
   function getMarkerLabel(type) {
     var label;
     switch(type) {
@@ -151,12 +168,16 @@
     }
   }
 
-  function requestStopInfo(itin_id) {
+  function requestStopInfo(itin_id, callback_when_info_closed) {
     $.ajax({
       url: "#{stop_info_cad_path}",
       data: {
         itinerary_id: itin_id
       }
+    }).done(function() {
+      google.maps.event.addListener(infoWindow, 'closeclick', function() {  
+        callback_when_info_closed();
+      });
     });
   }
 
@@ -178,7 +199,7 @@
 
     stopHoverMarker = new google.maps.Marker({
       map: map,
-      icon: getIcon(leg_flag),
+      icon: getIcon(leg_flag, 1),
       animation: google.maps.Animation.BOUNCE,
       position: {lat: lat, lng: lng}
     });
