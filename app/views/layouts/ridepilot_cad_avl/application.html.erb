@@ -4,6 +4,8 @@
   <title>
     <%= content_for?(:title) ? yield(:title) : translate_helper("application_title") %>
   </title>
+  <link href="https://fonts.googleapis.com/css?family=Barlow:400,400i,600,600i,800&amp;subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= split_stylesheet_link_tag "v1_theme", :media => "all" %>
   <%= render 'shared/google_maps/google_map_api' %>
@@ -17,9 +19,9 @@
   <div id="session-timeout-warning" style="display: none;">
     <%= translate_helper("session_timeout_warning") %>
   </div>
-  <div id="header">
+  <div id="header" style="height: 35px;">
     <div class="wrap selfclear">
-      <span style="font-size: 2em;">RidePilot CAD/AVL</span>
+      <span style="font-size: 2em; color: white">RidePilot CAD/AVL</span>
       <div id="login-area">
         Logged in to 
         <% if @provider_map.size > 1 %>
@@ -36,7 +38,7 @@
     </div><!-- /.wrap -->
   </div><!-- /#header -->
 
-  <div id="main" class="row">
+  <div id="main" class="row" style="padding: 10px;">
     <div id="messages" class="wrap selfclear">
       <% if notice %>
         <p class="alert alert-info"><%= notice %></p>
