@@ -102,8 +102,9 @@ class ItinerarySerializer
 
   attribute :return_trip_time do |object|
     trip = object.trip 
-    if trip && trip.is_outbound? 
-      trip.return_trip.try(:pickup_time)
+    # if has valid return trip scheduled
+    if trip && trip.is_outbound? && trip.return_trip && !trip.return_trip.is_cancelled_or_turned_down?
+      trip.return_trip.pickup_time
     end
   end
 end
