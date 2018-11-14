@@ -19,10 +19,17 @@
   <div id="session-timeout-warning" style="display: none;">
     <%= translate_helper("session_timeout_warning") %>
   </div>
-  <div id="header" style="height: 35px;">
-    <div class="wrap selfclear">
-      <span style="font-size: 2em; color: white">RidePilot CAD/AVL</span>
-      <div id="login-area">
+  <div id="header" style="height: 50px;">
+    <span id="brand">
+      <span class="name">
+        <a href='/'>
+         <%= translate_helper("site_title") %>
+        </a>
+        <span style="font-weight: normal;">CAD/AVL</span>
+      </span>
+    </span>
+    <div id="user-nav">
+      <div class="current-provider">
         Logged in to 
         <% if @provider_map.size > 1 %>
           <%= form_tag change_provider_path %>
@@ -35,20 +42,22 @@
           <%= current_user.current_provider.name %>
         <% end %>
       </div>
-    </div><!-- /.wrap -->
+    </div>
   </div><!-- /#header -->
 
-  <div id="main" class="row" style="padding: 10px;">
-    <div id="messages" class="wrap selfclear">
-      <% if notice %>
-        <p class="alert alert-info"><%= notice %></p>
-      <% end %>
-      <% if alert %>
-        <p class="alert alert-danger"><%= alert %></p>
-      <% end %>
+  <div class="main-wrapper">
+    <div id="main" class="row">
+      <div id="messages" class="wrap selfclear">
+        <% if notice %>
+          <p class="alert alert-info"><%= notice %></p>
+        <% end %>
+        <% if alert %>
+          <p class="alert alert-danger"><%= alert %></p>
+        <% end %>
+      </div>
+      <%= content_for?(:menu_bar) ? yield(:menu_bar) : '' %>
+      <%= yield %>
     </div>
-    <%= content_for?(:menu_bar) ? yield(:menu_bar) : '' %>
-    <%= yield %>
   </div>
 
   <%= render partial: 'layouts/footer' %>
