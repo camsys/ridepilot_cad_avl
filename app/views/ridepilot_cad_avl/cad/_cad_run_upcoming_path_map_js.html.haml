@@ -36,10 +36,22 @@
       suppressMarkers: true,
       preserveViewport: true,
       polylineOptions: {
-        color: "red",
-        strokeColor: "blue",
-        strokeWeight: 3,
-        strokeOpacity: 0.6
+        zIndex: 1,
+        geodesic: true,
+        strokeColor: '#2677FF',
+        strokeOpacity: 0.7,
+        strokeWeight: 7,
+        icons: [{
+          repeat: '30px',
+          icon: {
+            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+            scale: 1,
+            fillOpacity: 0,
+            strokeColor: '#fff',
+            strokeWeight: 1,
+            strokeOpacity: 1
+          }
+        }]
       }
     });
 

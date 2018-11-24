@@ -37,7 +37,7 @@
     }
     var marker = new google.maps.Marker({
       position: {lat: lat, lng: lng},
-      icon: getIcon(leg_flag, 0.5),
+      icon: getIcon(leg_flag, 0.8),
       label: markerLabel
     });
 
@@ -60,7 +60,7 @@
       marker.setIcon(getIcon(leg_flag, 1));
 
       function restoreIcon() {
-        marker.setIcon(getIcon(leg_flag, 0.5)); 
+        marker.setIcon(getIcon(leg_flag, 0.8)); 
       }
 
       //ajax request content
