@@ -64,6 +64,10 @@ RidepilotCadAvl::Engine.routes.draw do
           put 'track_location'
           put 'update_eta'
         end 
+
+        collection do 
+          put 'batch_sync_locations'
+        end
       end
 
       resources :trips, only: [] do

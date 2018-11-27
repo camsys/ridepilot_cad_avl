@@ -151,17 +151,26 @@ module RidepilotCadAvl
     end
 
     def track_location
+      provider_id = @driver.provider_id
       @itin = Itinerary.find_by_id(params[:id])
       if @itin
-        run = @itin.run 
-        provider = run.provider 
-        log_time = DateTime.now
         gps_location = GpsLocation.new(gps_location_params)
-        gps_location.provider = provider
-        gps_location.log_time = log_time
-        gps_location.run = run 
-        gps_location.itinerary_id = @itin.id 
+        gps_location.provider_id = provider_id
         gps_location.save
+      end
+
+      render success_response({})
+    end
+
+    def batch_sync_locations
+      provider_id = @driver.provider_id
+      location_params = params[:gps_locations]
+      unless location_params.blank?
+        location_params.each do |loc_params|
+          gps_location = GpsLocation.new(gps_location_params(loc_params))
+          gps_location.provider_id = provider_id
+          gps_location.save
+        end
       end
 
       render success_response({})
@@ -178,8 +187,9 @@ module RidepilotCadAvl
       params.require(:itinerary).permit(:status_code, :departure_time, :arrival_time, :finish_time)
     end
 
-    def gps_location_params
-      params.require(:gps_location).permit(:latitude, :longitude, :bearing, :speed, :accuracy)
+    def gps_location_params(loc_params = nil)
+      loc_params = params.require(:gps_location) unless loc_params
+      loc_params.permit(:latitude, :longitude, :bearing, :speed, :accuracy, :log_time, :run_id, :itinerary_id)
     end
   end  
 end
